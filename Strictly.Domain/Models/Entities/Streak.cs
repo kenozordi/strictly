@@ -16,7 +16,7 @@ namespace Strictly.Domain.Models.Entities
 
         // Relationships
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         public ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();

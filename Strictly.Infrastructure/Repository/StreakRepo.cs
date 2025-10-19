@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Application.Interfaces;
+using Strictly.Application.Streaks;
 using Strictly.Domain.Models.Entities;
 using Strictly.Infrastructure.DBContext;
 using System;
@@ -10,26 +11,19 @@ using System.Threading.Tasks;
 
 namespace Strictly.Infrastructure.Repository
 {
-    public class UserRepo : IUserRepo
+    public class StreakRepo : IStreakRepo
     {
         protected AppDbContext _dbContext;
 
-        public UserRepo(AppDbContext dbContext)
+        public StreakRepo(AppDbContext dbContext)
         {
             _dbContext = dbContext;   
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task CreateStreak(Streak streak)
         {
-            return await _dbContext.Users
-                .Include(u => u.Streaks)
-                .ToListAsync();
-        }
-
-        public async Task<User?> GetUserAsync(Guid userGuid)
-        {
-            return await _dbContext.Users
-                .FirstOrDefaultAsync(u => u.Id == userGuid);
+            await _dbContext.Streaks.AddAsync(streak);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
