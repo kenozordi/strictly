@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Strictly.Application.Interfaces;
 using Strictly.Infrastructure.Repository;
 using Strictly.Application.Services;
+using Strictly.Application.Streaks;
 
 namespace Strictly.Infrastructure
 {
@@ -29,6 +30,8 @@ namespace Strictly.Infrastructure
         {
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IStreakRepo, StreakRepo>();
+            services.AddScoped<IStreakService, StreakService>();
 
             return services;
         }
