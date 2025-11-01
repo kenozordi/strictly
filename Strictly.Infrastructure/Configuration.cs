@@ -7,15 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Strictly.Application.Interfaces;
 using Strictly.Infrastructure.Repository;
-using Strictly.Application.Services;
 using Strictly.Application.Streaks;
+using Strictly.Application.Users;
 
 namespace Strictly.Infrastructure
 {
     public static class Configuration
     {
+        /// <summary>
+        /// Add EF Core DB Context usin a connection string from config
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddDatabaseContext(
             this IServiceCollection services, IConfiguration configuration)
         {

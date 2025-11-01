@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Strictly.Application.Interfaces;
+using Strictly.Application.Users;
 using Strictly.Domain.Models.Entities;
 using Strictly.Infrastructure.DBContext;
 using System;
@@ -22,7 +22,6 @@ namespace Strictly.Infrastructure.Repository
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _dbContext.Users
-                .Include(u => u.Streaks)
                 .ToListAsync();
         }
 
