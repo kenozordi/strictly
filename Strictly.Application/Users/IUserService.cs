@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Application.Interfaces
+namespace Strictly.Application.Users
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<(int, string, IEnumerable<User>?)> GetAllAsync();
     }
 }

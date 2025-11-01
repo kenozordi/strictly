@@ -1,4 +1,5 @@
-﻿using Strictly.Domain.Models.Entities;
+﻿using Strictly.Domain.Models;
+using Strictly.Domain.Models.Entities;
 using Strictly.Domain.Models.Streak;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,18 @@ namespace Strictly.Application.Streaks
 {
     public interface IStreakService
     {
-        Task<(bool, string, object?)> CreateStreak(CreateStreakRequest createStreakRequest);
+        /// <summary>
+        /// Create a new streak
+        /// </summary>
+        /// <param name="createStreakRequest"></param>
+        /// <returns></returns>
+        Task<(int, string, object?)> CreateStreak(CreateStreakRequest createStreakRequest);
+
+        /// <summary>
+        /// Get streak by userId
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<(int, BaseResponse<List<Streak>>)> GetStreakByUserIdAsync(Guid userId);
     }
 }
