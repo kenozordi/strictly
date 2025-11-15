@@ -22,13 +22,13 @@ namespace Strictly.Application.Streaks
             _userRepo = userRepo;
         }
 
-        public async Task<(int, string, object?)> CreateStreak(CreateStreakRequest createStreakRequest)
+        public async Task<BaseResponse<string>> CreateStreak(CreateStreakRequest createStreakRequest)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(createStreakRequest.UserId);
             if (user == null)
             {
-                return ((int)HttpStatusCode.NotFound, "User does not exist", default);
+                return new BaseResponse<string>().Empty("User does not exist");
             }
 
             var streak = new Streak()
@@ -39,15 +39,22 @@ namespace Strictly.Application.Streaks
                 UserId = createStreakRequest.UserId,
             };
             await _streakRepo.CreateStreak(streak);
-            return ((int)HttpStatusCode.OK, "Streak Created successfully", default);
+            return new BaseResponse<string>().Empty("Streak Created successfully");
         }
 
-        public async Task<(int, BaseResponse<List<Streak>>)> GetStreakByUserIdAsync(Guid userId)
+        public async Task<BaseResponse<List<Streak>>> GetStreakByUserIdAsync(Guid userId)
         {
+            // validate userId
+            var user = await _userRepo.GetUserAsync(userId);
+            if (user == null)
+            {
+                return new BaseResponse<List<Streak>>().Empty("User does not exist");
+            }
+
             var streaks = await _streakRepo.GetStreakByUserIdAsync(userId);
             return streaks.Count > 0
-                ? ((int)HttpStatusCode.OK, new BaseResponse<List<Streak>>().Success(streaks))
-                : ((int)HttpStatusCode.NotFound, new BaseResponse<List<Streak>>().Empty("No streaks found"));
+                ? new BaseResponse<List<Streak>>().Success(streaks)
+                : new BaseResponse<List<Streak>>().Empty("No streaks found");
         }
     }
 }

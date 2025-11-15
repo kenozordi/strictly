@@ -1,16 +1,22 @@
 ﻿using Strictly.Domain.Models.Constants;
+using Strictly.Domain.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Strictly.Domain.Models
 {
-    public class BaseResponse<T> where T : class
+    public class BaseResponse
     {
-        public string? Code { get; set; }
+        public ResponseCode? Code { get; set; }
         public string? Description { get; set; }
+    }
+
+    public class BaseResponse<T> : BaseResponse where T : class
+    {
         public T? Data { get; set; }
 
         /// <summary>
@@ -21,8 +27,8 @@ namespace Strictly.Domain.Models
         /// <returns></returns>
         public BaseResponse<T> Success(T data, string? description = null)
         {
-            Code = ResponseCode.Success.Code;
-            Description = description ?? ResponseCode.Success.Description;
+            Code = ResponseCode.Success;
+            Description = description ?? ResponseHelper.Success.Description;
             Data = data;
             return this;
         }
@@ -30,12 +36,12 @@ namespace Strictly.Domain.Models
         /// <summary>
         /// Return a failed response
         /// </summary>
-        /// <param name="data"></param>
         /// <param name="description"></param>
+        /// <param name="code"></param>
         /// <returns></returns>
-        public BaseResponse<T> Failed(string description, string? code = null)
+        public BaseResponse<T> Failed(string description, ResponseCode? code = null)
         {
-            Code = code ?? ResponseCode.UnprocessableEntity.Code;
+            Code = code ?? ResponseCode.UnprocessableEntity;
             Description = description;
             Data = null;
             return this;
@@ -44,13 +50,12 @@ namespace Strictly.Domain.Models
         /// <summary>
         /// Return an empty/not found response
         /// </summary>
-        /// <param name="data"></param>
         /// <param name="description"></param>
         /// <returns></returns>
         public BaseResponse<T> Empty(string? description = null)
         {
-            Code = ResponseCode.NotFound.Code;
-            Description = description ?? ResponseCode.NotFound.Description;
+            Code = ResponseCode.NotFound;
+            Description = description ?? ResponseHelper.NotFound.Description;
             Data = default;
             return this;
         }
