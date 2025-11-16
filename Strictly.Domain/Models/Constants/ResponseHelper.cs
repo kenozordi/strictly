@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Strictly.Domain.Models.Constants
 {
-    public static class ResponseCode
+    public static class ResponseHelper
     {
         public static (string Code, string Description) Success = ("00", "Request Processed Successfully");
         public static (string Code, string Description) FailedValidation = ("01", "One or more validations failed");
