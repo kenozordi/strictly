@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
+
 var app = builder.Build();
 
 // apply migrations and seed data

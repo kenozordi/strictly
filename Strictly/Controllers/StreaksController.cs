@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Strictly.Api.Factories;
 using Strictly.Application.Streaks;
 using Strictly.Domain.Models.Streak;
 
@@ -21,15 +20,15 @@ namespace Strictly.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetStreakByUserIdAsync([FromRoute] Guid userId)
         {
-            var response = await _streakService.GetStreakByUserIdAsync(userId);
-            return ResponseFactory.ToObjectResult(response);
+            var (statusCode, response) = await _streakService.GetStreakByUserIdAsync(userId);
+            return StatusCode(statusCode, response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateStreakRequest createStreakRequest)
         {
-            var response = await _streakService.CreateStreak(createStreakRequest);
-            return ResponseFactory.ToObjectResult(response);
+            var (statusCode, response) = await _streakService.CreateStreak(createStreakRequest);
+            return StatusCode(statusCode, response);
         }
 
     }

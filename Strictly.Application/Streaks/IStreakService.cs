@@ -16,13 +16,13 @@ namespace Strictly.Application.Streaks
         /// </summary>
         /// <param name="createStreakRequest"></param>
         /// <returns></returns>
-        Task<BaseResponse<string>> CreateStreak(CreateStreakRequest createStreakRequest);
+        Task<(int, dynamic)> CreateStreak(CreateStreakRequest createStreakRequest);
 
         /// <summary>
         /// Get streak by userId
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
-        Task<BaseResponse<List<Streak>>> GetStreakByUserIdAsync(Guid userId);
+        /// <returns><(HTTP StatusCode, success/failed response)></returns>
+        Task<(int, dynamic)> GetStreakByUserIdAsync(Guid userId);
     }
 }

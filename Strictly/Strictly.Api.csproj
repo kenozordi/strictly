@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Strictly.Infrastructure\Strictly.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Factories\" />
+  </ItemGroup>
+
 </Project>

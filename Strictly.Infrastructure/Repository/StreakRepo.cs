@@ -21,13 +21,16 @@ namespace Strictly.Infrastructure.Repository
 
         public async Task CreateStreak(Streak streak)
         {
-            await _dbContext.Streaks.AddAsync(streak);
+            await _dbContext.Streaks
+                .AddAsync(streak);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<List<Streak>> GetStreakByUserIdAsync(Guid userId)
         {
-            return await _dbContext.Streaks.Where(s => s.UserId == userId).ToListAsync();
+            return await _dbContext.Streaks
+                .AsNoTracking()
+                .Where(s => s.UserId == userId).ToListAsync();
         }
     }
 }

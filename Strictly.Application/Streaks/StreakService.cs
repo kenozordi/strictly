@@ -22,13 +22,13 @@ namespace Strictly.Application.Streaks
             _userRepo = userRepo;
         }
 
-        public async Task<BaseResponse<string>> CreateStreak(CreateStreakRequest createStreakRequest)
+        public async Task<(int, dynamic)> CreateStreak(CreateStreakRequest createStreakRequest)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(createStreakRequest.UserId);
             if (user == null)
             {
-                return new BaseResponse<string>().Empty("User does not exist");
+                return ((int)HttpStatusCode.NotFound, ResponseHelper.ToEmpty("User does not exist"));
             }
 
             var streak = new Streak()
@@ -39,22 +39,22 @@ namespace Strictly.Application.Streaks
                 UserId = createStreakRequest.UserId,
             };
             await _streakRepo.CreateStreak(streak);
-            return new BaseResponse<string>().Empty("Streak Created successfully");
+            return ((int)HttpStatusCode.OK, ResponseHelper.ToSuccess("Streak Created successfully"));
         }
 
-        public async Task<BaseResponse<List<Streak>>> GetStreakByUserIdAsync(Guid userId)
+        public async Task<(int, dynamic)> GetStreakByUserIdAsync(Guid userId)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(userId);
             if (user == null)
             {
-                return new BaseResponse<List<Streak>>().Empty("User does not exist");
+                return ((int)HttpStatusCode.NotFound, ResponseHelper.ToEmpty("User does not exist"));
             }
 
             var streaks = await _streakRepo.GetStreakByUserIdAsync(userId);
             return streaks.Count > 0
-                ? new BaseResponse<List<Streak>>().Success(streaks)
-                : new BaseResponse<List<Streak>>().Empty("No streaks found");
+                ? ((int)HttpStatusCode.OK, ResponseHelper.ToSuccess(streaks))
+                : ((int)HttpStatusCode.NotFound, ResponseHelper.ToEmpty("No streaks found"));
         }
     }
 }

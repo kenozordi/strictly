@@ -17,7 +17,7 @@ namespace Strictly.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var (statusCode, message, data) = await _userService.GetAllAsync();
+            var (statusCode, data) = await _userService.GetAllAsync();
             return StatusCode(statusCode, data);
         }
 

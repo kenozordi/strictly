@@ -9,6 +9,6 @@ namespace Strictly.Application.Users
 {
     public interface IUserService
     {
-        Task<(int, string, IEnumerable<User>?)> GetAllAsync();
+        Task<(int, dynamic)> GetAllAsync();
     }
 }
