@@ -8,6 +8,6 @@ namespace Strictly.Application.Users
 {
     public interface IUserService
     {
-        Task<(int, dynamic)> GetAllAsync();
+        Task<(int statusCode, dynamic responseBody)> GetAllAsync();
     }
 }

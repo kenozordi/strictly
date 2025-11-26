@@ -22,7 +22,7 @@ namespace Strictly.Application.Streaks
             _userRepo = userRepo;
         }
 
-        public async Task<(int, dynamic)> CreateStreak(CreateStreakRequest createStreakRequest)
+        public async Task<(int statusCode, dynamic responseBody)> CreateStreak(CreateStreakRequest createStreakRequest)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(createStreakRequest.UserId);
@@ -44,7 +44,7 @@ namespace Strictly.Application.Streaks
                 : ((int)HttpStatusCode.UnprocessableEntity, ResponseHelper.ToUnprocessable("Failed to create streak, please try again later!"));
         }
 
-        public async Task<(int, dynamic)> GetStreakByUserIdAsync(Guid userId)
+        public async Task<(int statusCode, dynamic responseBody)> GetStreakByUserIdAsync(Guid userId)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(userId);

@@ -17,7 +17,7 @@ namespace Strictly.Application.Users
             _userRepo = userRepo;
         }
 
-        public async Task<(int, dynamic)> GetAllAsync()
+        public async Task<(int statusCode, dynamic responseBody)> GetAllAsync()
         {
             var users = await _userRepo.GetAllAsync();
             return users.Count() > 0
