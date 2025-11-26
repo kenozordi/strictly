@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Application.Users;
-using Strictly.Domain.Models.Entities;
+using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;

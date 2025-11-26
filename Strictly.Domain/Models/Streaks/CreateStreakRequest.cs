@@ -1,12 +1,11 @@
-﻿using Strictly.Domain.Models.Entities;
-using Strictly.Domain.Models.Enum;
+﻿using Strictly.Domain.Models.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Streak
+namespace Strictly.Domain.Models.Streaks
 {
     public class CreateStreakRequest
     {

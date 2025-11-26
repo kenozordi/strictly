@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Strictly.Domain.Models.Entities;
+using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.Streaks;
+using Strictly.Domain.Models.Tags;
+using Strictly.Domain.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;

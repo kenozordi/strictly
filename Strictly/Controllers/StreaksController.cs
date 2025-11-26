@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strictly.Application.Streaks;
-using Strictly.Domain.Models.Streak;
+using Strictly.Domain.Models.Streaks;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

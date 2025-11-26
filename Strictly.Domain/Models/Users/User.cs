@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Strictly.Domain.Models.Shared;
+using Strictly.Domain.Models.Streaks;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Entities
+namespace Strictly.Domain.Models.Users
 {
     public class User : BaseEntity
     {

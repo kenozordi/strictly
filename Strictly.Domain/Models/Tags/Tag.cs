@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Strictly.Domain.Models.Shared;
+using Strictly.Domain.Models.Streaks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Entities
+namespace Strictly.Domain.Models.Tags
 {
     public class Tag : BaseEntity
     {

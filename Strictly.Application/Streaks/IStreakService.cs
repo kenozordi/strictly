@@ -1,6 +1,4 @@
-﻿using Strictly.Domain.Models;
-using Strictly.Domain.Models.Entities;
-using Strictly.Domain.Models.Streak;
+﻿using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
 using System.Linq;

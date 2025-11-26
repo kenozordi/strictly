@@ -1,6 +1,4 @@
-﻿using Strictly.Domain.Models.Constants;
-using Strictly.Domain.Models.Enum;
-using Strictly.Domain.Models.Shared;
+﻿using Strictly.Domain.Models.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models
+namespace Strictly.Domain.Models.Shared
 {
     public class BaseResponse
     {

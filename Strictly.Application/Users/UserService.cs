@@ -1,6 +1,5 @@
 ﻿using Strictly.Application.Streaks;
-using Strictly.Domain.Models.Constants;
-using Strictly.Domain.Models.Entities;
+using Strictly.Domain.Models.Shared.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;

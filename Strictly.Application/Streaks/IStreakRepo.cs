@@ -1,4 +1,4 @@
-﻿using Strictly.Domain.Models.Entities;
+﻿using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Strictly.Application.Streaks
         /// </summary>
         /// <param name="streak"></param>
         /// <returns></returns>
-        Task CreateStreak(Streak streak);
+        Task<int> CreateStreak(Streak streak);
 
         /// <summary>
         /// Get streak by userId

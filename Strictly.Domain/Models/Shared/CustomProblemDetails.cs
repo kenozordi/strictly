@@ -1,4 +1,4 @@
-﻿using Strictly.Domain.Models.Enum;
+﻿using Strictly.Domain.Models.Shared.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
