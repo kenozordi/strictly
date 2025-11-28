@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Strictly.Api.Extensions;
 using Strictly.Application.Streaks;
 using Strictly.Domain.Models.Streaks;
-
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Strictly.Api.Controllers
 {
@@ -21,15 +19,15 @@ namespace Strictly.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetStreakByUserIdAsync([FromRoute] Guid userId)
         {
-            var (statusCode, response) = await _streakService.GetStreakByUserIdAsync(userId);
-            return StatusCode(statusCode, response);
+            var controllerResponse = (await _streakService.GetStreakByUserIdAsync(userId)).FormatResponse();
+            return StatusCode(controllerResponse.HttpStatusCode, controllerResponse.Response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateStreakRequest createStreakRequest)
         {
-            var (statusCode, response) = await _streakService.CreateStreak(createStreakRequest);
-            return StatusCode(statusCode, response);
+            var controllerResponse = (await _streakService.CreateStreak(createStreakRequest)).FormatResponse();
+            return StatusCode(controllerResponse.HttpStatusCode, controllerResponse.Response);
         }
 
     }

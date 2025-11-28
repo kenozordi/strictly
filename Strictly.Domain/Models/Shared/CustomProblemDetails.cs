@@ -14,5 +14,11 @@ namespace Strictly.Domain.Models.Shared
         public string? Title { get; set; }
         public string? Detail { get; set; }
         public ResponseCode? Code { get; set; }
+
+        public CustomProblemDetails SetStatus(int? status)
+        {
+            this.Status = status;
+            return this;
+        }
     }
 }

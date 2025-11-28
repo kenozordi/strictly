@@ -1,4 +1,4 @@
-using Strictly.Infrastructure;
+using Strictly.Infrastructure.Configuration;
 using Strictly.Infrastructure.DBContext;
 using Strictly.Infrastructure.Seeders;
 using System.Text.Json.Serialization;
@@ -20,9 +20,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
+builder.Services.AddProviders();
 
 var app = builder.Build();
 
+app.Services.ValidateConfiguration();
 // apply migrations and seed data
 using (var scope = app.Services.CreateScope())
 {

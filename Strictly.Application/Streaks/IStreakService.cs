@@ -1,4 +1,5 @@
-﻿using Strictly.Domain.Models.Streaks;
+﻿using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,13 @@ namespace Strictly.Application.Streaks
         /// </summary>
         /// <param name="createStreakRequest"></param>
         /// <returns></returns>
-        Task<(int statusCode, dynamic responseBody)> CreateStreak(CreateStreakRequest createStreakRequest);
+        Task<ServiceResult> CreateStreak(CreateStreakRequest createStreakRequest);
 
         /// <summary>
         /// Get streak by userId
         /// </summary>
         /// <param name="userId"></param>
         /// <returns><(HTTP StatusCode, success/failed response)></returns>
-        Task<(int statusCode, dynamic responseBody)> GetStreakByUserIdAsync(Guid userId);
+        Task<ServiceResult> GetStreakByUserIdAsync(Guid userId);
     }
 }

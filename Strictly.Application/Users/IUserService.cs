@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Strictly.Domain.Models.Shared.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Strictly.Application.Users
 {
     public interface IUserService
     {
-        Task<(int statusCode, dynamic responseBody)> GetAllAsync();
+        Task<ServiceResult> GetAllAsync();
     }
 }

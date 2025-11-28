@@ -13,10 +13,10 @@ namespace Strictly.Domain.Models.Streaks
 {
     public class GetStreakResponse
     {
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public string Title { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public string? Title { get; set; }
         public string? Description { get; set; }
-        public StreakFrequency Frequency { get; set; } = StreakFrequency.Daily;
-        public bool IsActive { get; set; } = true;
+        public string? Frequency { get; set; }
+        public bool IsActive { get; set; }
     }
 }

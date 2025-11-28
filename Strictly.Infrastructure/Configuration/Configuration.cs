@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 using Strictly.Infrastructure.Repository;
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
+using Strictly.Application.Shared;
+using AutoMapper;
 
-namespace Strictly.Infrastructure
+namespace Strictly.Infrastructure.Configuration
 {
     public static class Configuration
     {
@@ -30,6 +32,11 @@ namespace Strictly.Infrastructure
             return services;
         }
 
+        /// <summary>
+        /// Add Custom Services to DI Container
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddServices(
             this IServiceCollection services)
         {
@@ -40,5 +47,19 @@ namespace Strictly.Infrastructure
 
             return services;
         }
+
+        /// <summary>
+        /// Configure Providers like automapper to DI Container
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddProviders(
+            this IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(MappingProfile));
+
+            return services;
+        }
+
     }
 }

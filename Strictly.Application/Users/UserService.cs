@@ -17,12 +17,12 @@ namespace Strictly.Application.Users
             _userRepo = userRepo;
         }
 
-        public async Task<(int statusCode, dynamic responseBody)> GetAllAsync()
+        public async Task<ServiceResult> GetAllAsync()
         {
             var users = await _userRepo.GetAllAsync();
             return users.Count() > 0
-                ? ((int)HttpStatusCode.OK, ResponseHelper.ToSuccess(users))
-                : ((int)HttpStatusCode.NotFound, ResponseHelper.ToEmpty("No users found"));
+                ? ResponseHelper.ToSuccess(users)
+                : ResponseHelper.ToEmpty("No users found");
         }
     }
 }
