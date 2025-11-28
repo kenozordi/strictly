@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Application.Users;
-using Strictly.Domain.Models.Entities;
+using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
@@ -22,12 +22,14 @@ namespace Strictly.Infrastructure.Repository
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _dbContext.Users
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<User?> GetUserAsync(Guid userGuid)
         {
             return await _dbContext.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userGuid);
         }
     }

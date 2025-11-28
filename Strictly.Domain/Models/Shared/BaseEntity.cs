@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Entities
+namespace Strictly.Domain.Models.Shared
 {
     public abstract class BaseEntity
     {

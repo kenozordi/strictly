@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Strictly.Api.Extensions;
 using Strictly.Application.Users;
+using Strictly.Domain.Models.Users;
 
 namespace Strictly.Api.Controllers
 {
@@ -17,8 +19,8 @@ namespace Strictly.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var (statusCode, message, data) = await _userService.GetAllAsync();
-            return StatusCode(statusCode, data);
+            var controllerResponse = (await _userService.GetAllAsync()).FormatResponse();
+            return StatusCode(controllerResponse.HttpStatusCode, controllerResponse.Response);
         }
 
     }

@@ -1,4 +1,4 @@
-﻿using Strictly.Domain.Models.Entities;
+﻿using Strictly.Domain.Models.Shared.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace Strictly.Application.Users
 {
     public interface IUserService
     {
-        Task<(int, string, IEnumerable<User>?)> GetAllAsync();
+        Task<ServiceResult> GetAllAsync();
     }
 }

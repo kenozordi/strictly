@@ -1,10 +1,10 @@
-﻿using Strictly.Application.Users;
-using Strictly.Domain.Models;
-using Strictly.Domain.Models.Constants;
-using Strictly.Domain.Models.Entities;
-using Strictly.Domain.Models.Streak;
+﻿using AutoMapper;
+using Strictly.Application.Users;
+using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -16,19 +16,22 @@ namespace Strictly.Application.Streaks
     {
         protected readonly IStreakRepo _streakRepo;
         protected readonly IUserRepo _userRepo;
-        public StreakService(IStreakRepo streakRepo, IUserRepo userRepo)
+        protected readonly IMapper _mapper;
+        public StreakService(IStreakRepo streakRepo, IUserRepo userRepo,
+            IMapper mapper)
         {
             _streakRepo = streakRepo;
             _userRepo = userRepo;
+            _mapper = mapper;
         }
 
-        public async Task<BaseResponse<string>> CreateStreak(CreateStreakRequest createStreakRequest)
+        public async Task<ServiceResult> CreateStreak(CreateStreakRequest createStreakRequest)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(createStreakRequest.UserId);
             if (user == null)
             {
-                return new BaseResponse<string>().Empty("User does not exist");
+                return ResponseHelper.ToBadRequest("User does not exist");
             }
 
             var streak = new Streak()
@@ -38,23 +41,25 @@ namespace Strictly.Application.Streaks
                 Frequency = createStreakRequest.Frequency,
                 UserId = createStreakRequest.UserId,
             };
-            await _streakRepo.CreateStreak(streak);
-            return new BaseResponse<string>().Empty("Streak Created successfully");
+            var affectedRows = await _streakRepo.CreateStreak(streak);
+            return affectedRows > 0
+                ? ResponseHelper.ToSuccess("Streak created successfully")
+                : ResponseHelper.ToUnprocessable("Failed to create streak, please try again later!");
         }
 
-        public async Task<BaseResponse<List<Streak>>> GetStreakByUserIdAsync(Guid userId)
+        public async Task<ServiceResult> GetStreakByUserIdAsync(Guid userId)
         {
             // validate userId
             var user = await _userRepo.GetUserAsync(userId);
             if (user == null)
             {
-                return new BaseResponse<List<Streak>>().Empty("User does not exist");
+                return ResponseHelper.ToBadRequest("User does not exist");
             }
 
             var streaks = await _streakRepo.GetStreakByUserIdAsync(userId);
             return streaks.Count > 0
-                ? new BaseResponse<List<Streak>>().Success(streaks)
-                : new BaseResponse<List<Streak>>().Empty("No streaks found");
+                ? ResponseHelper.ToSuccess(_mapper.Map<List<GetStreakResponse>>(streaks))
+                : ResponseHelper.ToUnprocessable("No streaks found");
         }
     }
 }
