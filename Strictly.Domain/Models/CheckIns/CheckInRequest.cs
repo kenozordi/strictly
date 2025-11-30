@@ -1,6 +1,4 @@
-﻿using Strictly.Domain.Models.Shared;
-using Strictly.Domain.Models.Streaks;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Strictly.Domain.Models.CheckIns
 {
-    public class CheckIn : BaseEntity
+    public class CheckInRequest
     {
-        public DateTime Date { get; set; } = DateTime.UtcNow;
         public Guid StreakId { get; set; }
+        public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }
