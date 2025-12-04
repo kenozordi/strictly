@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Application.CheckIns;
 using Strictly.Domain.Models.CheckIns;
-using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
@@ -20,18 +19,19 @@ namespace Strictly.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<List<CheckIn>> GetCheckInHistory(Guid streakId)
+        public async Task<List<CheckIn>> GetActiveCheckInSchedule(Guid streakId)
         {
             return await _dbContext.CheckIns
                 .AsNoTracking()
-                .Where(s => s.StreakId == streakId).ToListAsync();
+                .Where(s => s.StreakId == streakId && s.IsActive).ToListAsync();
         }
 
-        //public async Task<List<CheckIn>> GetCheckInHistory(Guid streakId, Guid UserId)
-        //{
-        //    return await _dbContext.CheckIns
-        //        .AsNoTracking()
-        //        .Where(s => s.StreakId == streakId && s.userID).ToListAsync();
-        //}
+        public async Task<int> CreateCheckIn(CheckIn checkIn)
+        {
+            await _dbContext.CheckIns
+                .AddAsync(checkIn);
+            return await _dbContext.SaveChangesAsync();
+        }
+
     }
 }
