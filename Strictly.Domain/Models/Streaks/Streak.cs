@@ -16,7 +16,7 @@ namespace Strictly.Domain.Models.Streaks
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public StreakFrequency Frequency { get; set; } = StreakFrequency.Daily;
-        public bool IsActive { get; set; } = true;
+        public DateTime? EndDate { get; set; }
 
         // Relationships
         public Guid UserId { get; set; }

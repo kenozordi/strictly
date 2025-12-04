@@ -9,7 +9,7 @@ namespace Strictly.Application.CheckIns
 {
     public interface ICheckInRepo
     {
-        Task<List<CheckIn>> GetCheckInHistory(Guid streakId);
-        //Task<List<CheckIn>> GetCheckInHistory(Guid streakId, Guid UserId);
+        Task<List<CheckIn>> GetActiveCheckInSchedule(Guid streakId);
+        Task<int> CreateCheckIn(CheckIn checkIn);
     }
 }

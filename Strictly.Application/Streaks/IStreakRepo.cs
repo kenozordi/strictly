@@ -22,5 +22,12 @@ namespace Strictly.Application.Streaks
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<List<Streak>> GetStreakByUserIdAsync(Guid userId);
+
+        /// <summary>
+        /// Get streak by streakId
+        /// </summary>
+        /// <param name="streakId"></param>
+        /// <returns></returns>
+        Task<Streak?> GetStreak(Guid streakId);
     }
 }

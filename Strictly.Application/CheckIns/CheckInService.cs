@@ -2,6 +2,7 @@
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
 using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.Shared.Constants;
 using System;
 using System.Collections.Generic;
@@ -28,14 +29,47 @@ namespace Strictly.Application.CheckIns
             _mapper = mapper;
         }
 
-        public async Task<ServiceResult> GetCheckInHistory(Guid streakId)
+        public async Task<ServiceResult> CreateCheckIn(CreateCheckInRequest createCheckInRequest)
+        {
+            var result = new CreateCheckInValidator().Validate(createCheckInRequest);
+            if (!result.IsValid)
+            {
+                return ResponseHelper.ToBadRequest(string.Join(",", result.Errors.Select(e => e.ErrorMessage)));
+            }
+
+            // validate userId
+            var user = await _userRepo.GetUserAsync(createCheckInRequest.UserId);
+            if (user is null)
+            {
+                return ResponseHelper.ToBadRequest("User does not exist");
+            }
+            // validate streakId
+            var streak = await _streakRepo.GetStreak(createCheckInRequest.StreakId);
+            if (streak is null)
+            {
+                return ResponseHelper.ToBadRequest("Streak does not exist");
+            }
+
+            var checkIn = _mapper.Map<CheckIn>(createCheckInRequest);
+            var affectedRows = await _checkInRepo.CreateCheckIn(checkIn);
+            return affectedRows > 0
+                ? ResponseHelper.ToSuccess("Check-In created successfully")
+                : ResponseHelper.ToUnprocessable("Failed to create Check-In, please try again later!");
+        }
+
+        public async Task<ServiceResult> GetActiveCheckInSchedule(Guid streakId)
         {
             // validate streakId
+            var streak = await _streakRepo.GetStreak(streakId);
+            if (streak is null)
+            {
+                return ResponseHelper.ToBadRequest("Streak does not exist");
+            }
 
-            var checkInHistory = await _checkInRepo.GetCheckInHistory(streakId);
+            var checkInHistory = await _checkInRepo.GetActiveCheckInSchedule(streakId);
             return checkInHistory.Count > 0
                 ? ResponseHelper.ToSuccess(_mapper.Map<List<CheckIn>>(checkInHistory))
-                : ResponseHelper.ToUnprocessable("No check in to see here");
+                : ResponseHelper.ToEmpty("No Check-In to see here");
         }
 
     }

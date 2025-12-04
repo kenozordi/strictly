@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strictly.Api.Extensions;
 using Strictly.Application.CheckIns;
+using Strictly.Domain.Models.CheckIns;
 
 namespace Strictly.Api.Controllers
 {
@@ -15,10 +16,10 @@ namespace Strictly.Api.Controllers
             _checkInService = checkInService;
         }
 
-        [HttpGet("streak/{streakId}")]
-        public async Task<IActionResult> GetCheckInHistory([FromRoute] Guid streakId)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CreateCheckInRequest createCheckInRequest)
         {
-            var controllerResponse = (await _checkInService.GetCheckInHistory(streakId)).FormatResponse();
+            var controllerResponse = (await _checkInService.CreateCheckIn(createCheckInRequest)).FormatResponse();
             return StatusCode(controllerResponse.HttpStatusCode, controllerResponse.Response);
         }
 

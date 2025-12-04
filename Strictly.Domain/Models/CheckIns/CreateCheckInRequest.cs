@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Strictly.Domain.Models.CheckIns
 {
-    public class CheckInRequest
+    public class CreateCheckInRequest
     {
         public Guid StreakId { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public Guid UserId { get; set; }
+        public DateTime DueDate { get; set; }
     }
 }
