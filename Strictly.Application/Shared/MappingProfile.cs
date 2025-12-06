@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.Streaks;
+using Strictly.Domain.Models.Streaks.CreateStreak;
 using Strictly.Domain.Models.Users;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,8 @@ namespace Strictly.Application.Shared
         {
             CreateMap<Streak, GetStreakResponse>()
                 .ForMember(dest => dest.Frequency, opt => opt.MapFrom(src => src.Frequency.ToString()))
+                .ReverseMap();
+            CreateMap<Streak, CreateStreakRequest>()
                 .ReverseMap();
             CreateMap<CheckIn, CreateCheckInRequest>()
                 .ReverseMap();

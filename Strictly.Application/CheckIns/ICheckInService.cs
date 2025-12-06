@@ -1,5 +1,6 @@
-﻿using Strictly.Domain.Models.CheckIns;
+﻿using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Strictly.Application.CheckIns
     {
         Task<ServiceResult> GetActiveCheckInSchedule(Guid streakId);
         Task<ServiceResult> CreateCheckIn(CreateCheckInRequest checkInRequest);
+        Task<ServiceResult> CreateCheckInSchedule(Streak streak);
     }
 }

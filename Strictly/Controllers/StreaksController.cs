@@ -2,7 +2,7 @@
 using Strictly.Api.Extensions;
 using Strictly.Application.CheckIns;
 using Strictly.Application.Streaks;
-using Strictly.Domain.Models.Streaks;
+using Strictly.Domain.Models.Streaks.CreateStreak;
 
 namespace Strictly.Api.Controllers
 {

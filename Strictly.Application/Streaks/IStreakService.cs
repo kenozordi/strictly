@@ -1,5 +1,5 @@
 ﻿using Strictly.Domain.Models.Shared.Constants;
-using Strictly.Domain.Models.Streaks;
+using Strictly.Domain.Models.Streaks.CreateStreak;
 using System;
 using System.Collections.Generic;
 using System.Linq;

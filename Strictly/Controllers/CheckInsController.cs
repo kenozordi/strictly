@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strictly.Api.Extensions;
 using Strictly.Application.CheckIns;
-using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 
 namespace Strictly.Api.Controllers
 {

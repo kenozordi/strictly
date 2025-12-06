@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.CheckIns
+namespace Strictly.Domain.Models.CheckIns.CreateCheckIn
 {
     public class CreateCheckInRequest
     {

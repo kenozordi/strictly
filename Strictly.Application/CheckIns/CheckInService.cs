@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.VisualBasic;
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
+using Strictly.Domain.Enum;
 using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,6 +58,61 @@ namespace Strictly.Application.CheckIns
             return affectedRows > 0
                 ? ResponseHelper.ToSuccess("Check-In created successfully")
                 : ResponseHelper.ToUnprocessable("Failed to create Check-In, please try again later!");
+        }
+
+        public async Task<ServiceResult> CreateCheckInSchedule(Streak streak)
+        {
+            var addScheduleResponse = (false, "Unsuccessful");
+            switch (streak.Frequency)
+            {
+                case Domain.Models.Shared.Enum.StreakFrequency.Daily:
+                    addScheduleResponse = await AddDailyCheckInSchedule(streak);
+                    break;
+                case Domain.Models.Shared.Enum.StreakFrequency.Weekly:
+                    throw new NotImplementedException();
+                    break;
+                case Domain.Models.Shared.Enum.StreakFrequency.Monthly:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new NotImplementedException();
+                    break;
+            }
+
+            return addScheduleResponse.Item1
+                ? ResponseHelper.ToSuccess("Check-In schedule generated successfully")
+                : ResponseHelper.ToUnprocessable($"Check-In schedule failed to generate: {addScheduleResponse.Item2}");
+        }
+        
+        private async Task<(bool isSuccess, string message)> AddDailyCheckInSchedule(Streak streak)
+        {
+            // Todo: Wrap this in a DB transaction
+            try
+            {
+                int noOfCheckinCreated = 0;
+                int today = 1;
+                int numOfCheckinsAfterToday = today + (streak.EndDate?.Date - streak.CreatedAt.Date)!.Value.Days;
+                var nextDatePlaceholder = streak.CreatedAt;
+                for (int i = 0; i < numOfCheckinsAfterToday; i++)
+                {
+                    var checkIn = new CheckIn()
+                    {
+                        DueDate = nextDatePlaceholder,
+                        StreakId = streak.Id,
+                        UserId = streak.UserId,
+                        Status = (int)CheckInStatus.Pending
+                    };
+                    noOfCheckinCreated += await _checkInRepo.CreateCheckIn(checkIn);
+
+                    nextDatePlaceholder = nextDatePlaceholder.AddDays(1);
+                }
+
+                return (true, noOfCheckinCreated.ToString());
+            }
+            catch (Exception ex)
+            {
+                return (false, "Something went wrong, An Exception Occured");
+            }
         }
 
         public async Task<ServiceResult> GetActiveCheckInSchedule(Guid streakId)
