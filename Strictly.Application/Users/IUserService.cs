@@ -1,4 +1,4 @@
-﻿using Strictly.Domain.Models.Shared.Constants;
+﻿using Strictly.Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using Strictly.Domain.Models.Shared.Enum;
+﻿using Strictly.Domain.Enum;
+using Strictly.Domain.Models.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Strictly.Domain.Models.Shared.Constants
+namespace Strictly.Domain.Constants
 {
     public static class ResponseHelper
     {
@@ -25,7 +26,8 @@ namespace Strictly.Domain.Models.Shared.Constants
         /// <returns></returns>
         public static ServiceResult ToSuccess(object data, string? description = null)
         {
-            return new ServiceResult() {
+            return new ServiceResult()
+            {
                 IsSuccess = true,
                 Data = new BaseResponse<object>()
                 {

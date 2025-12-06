@@ -1,5 +1,6 @@
-﻿using Strictly.Application.Streaks;
-using Strictly.Domain.Models.Shared.Constants;
+﻿using AutoMapper;
+using Strictly.Domain.Constants;
+using Strictly.Domain.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,18 @@ namespace Strictly.Application.Users
     public class UserService : IUserService
     {
         protected readonly IUserRepo _userRepo;
-        public UserService(IUserRepo userRepo)
+        protected readonly IMapper _mapper;
+        public UserService(IUserRepo userRepo, IMapper mapper)
         {
             _userRepo = userRepo;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult> GetAllAsync()
         {
             var users = await _userRepo.GetAllAsync();
             return users.Count() > 0
-                ? ResponseHelper.ToSuccess(users)
+                ? ResponseHelper.ToSuccess(_mapper.Map<List<GetUserResponse>>(users))
                 : ResponseHelper.ToEmpty("No users found");
         }
     }

@@ -12,6 +12,7 @@ using Strictly.Application.Streaks;
 using Strictly.Application.Users;
 using Strictly.Application.Shared;
 using AutoMapper;
+using Strictly.Application.CheckIns;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -44,6 +45,8 @@ namespace Strictly.Infrastructure.Configuration
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IStreakRepo, StreakRepo>();
             services.AddScoped<IStreakService, StreakService>();
+            services.AddScoped<ICheckInRepo, CheckInRepo>();
+            services.AddScoped<ICheckInService, CheckInService>();
 
             return services;
         }

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Shared.Enum
+namespace Strictly.Domain.Enum
 {
-    public enum StreakFrequency
+    public enum CheckInStatus
     {
-        Daily,
-        Weekly,
-        Monthly
+        Pending,
+        Completed,
+        Canceled
     }
 }

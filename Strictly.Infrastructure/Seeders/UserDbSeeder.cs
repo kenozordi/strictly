@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Strictly.Domain.Models.Shared.Enum;
+using Strictly.Domain.Enum;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;

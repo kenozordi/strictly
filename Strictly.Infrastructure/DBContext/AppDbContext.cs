@@ -43,9 +43,7 @@ namespace Strictly.Infrastructure.DBContext
 
             // Streak -> CheckIn (1:N)
             modelBuilder.Entity<Streak>()
-                .HasMany(s => s.CheckIns)
-                .WithOne(c => c.Streak)
-                .HasForeignKey(c => c.StreakId);
+                .HasMany(s => s.CheckIns);
 
             // User -> Notification (1:N)
             modelBuilder.Entity<User>()

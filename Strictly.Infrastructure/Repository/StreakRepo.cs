@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Application.Streaks;
 using Strictly.Domain.Models.Streaks;
+using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,13 @@ namespace Strictly.Infrastructure.Repository
             await _dbContext.Streaks
                 .AddAsync(streak);
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<Streak?> GetStreak(Guid streakId)
+        {
+            return await _dbContext.Streaks
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == streakId);
         }
 
         public async Task<List<Streak>> GetStreakByUserIdAsync(Guid userId)

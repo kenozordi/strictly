@@ -1,6 +1,6 @@
-﻿using Strictly.Domain.Models.CheckIns;
+﻿using Strictly.Domain.Enum;
+using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.Shared;
-using Strictly.Domain.Models.Shared.Enum;
 using Strictly.Domain.Models.Tags;
 using Strictly.Domain.Models.Users;
 using System;
@@ -16,12 +16,11 @@ namespace Strictly.Domain.Models.Streaks
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public StreakFrequency Frequency { get; set; } = StreakFrequency.Daily;
-        public bool IsActive { get; set; } = true;
+        public Guid UserId { get; set; }
+        public DateTime? EndDate { get; set; }
 
         // Relationships
-        public Guid UserId { get; set; }
         public User? User { get; set; }
-
         public ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     }

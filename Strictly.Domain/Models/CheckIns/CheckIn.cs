@@ -1,4 +1,5 @@
-﻿using Strictly.Domain.Models.Shared;
+﻿using Strictly.Domain.Enum;
+using Strictly.Domain.Models.Shared;
 using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,11 @@ namespace Strictly.Domain.Models.CheckIns
 {
     public class CheckIn : BaseEntity
     {
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime DueDate { get; set; }
+        public DateTime? CheckedInAt { get; set; }
         public Guid StreakId { get; set; }
+        public Guid UserId { get; set; }
+        public CheckInStatus Status { get; set; } = CheckInStatus.Pending;
         public Streak Streak { get; set; }
     }
 }
