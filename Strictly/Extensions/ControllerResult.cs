@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Strictly.Domain.Models.Shared.Constants;
-using Strictly.Domain.Models.Shared.Enum;
+using Strictly.Domain.Constants;
+using Strictly.Domain.Enum;
 using System.Net;
 
 namespace Strictly.Api.Extensions

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Constants;
 using Strictly.Domain.Models.Users;
 using System;
 using System.Collections.Generic;

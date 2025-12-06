@@ -2,10 +2,12 @@
 using Microsoft.VisualBasic;
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
+using Strictly.Domain.Constants;
 using Strictly.Domain.Enum;
 using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.CheckIns.CheckIntoStreak;
 using Strictly.Domain.Models.CheckIns.CreateCheckIn;
-using Strictly.Domain.Models.Shared.Constants;
+using Strictly.Domain.Models.CheckIns.GetCheckIn;
 using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
@@ -59,19 +61,49 @@ namespace Strictly.Application.CheckIns
                 ? ResponseHelper.ToSuccess("Check-In created successfully")
                 : ResponseHelper.ToUnprocessable("Failed to create Check-In, please try again later!");
         }
+        
+        public async Task<ServiceResult> CheckIn(CheckInRequest checkInRequest)
+        {
+            // validate userId
+            var user = await _userRepo.GetUserAsync(checkInRequest.UserId);
+            if (user is null)
+            {
+                return ResponseHelper.ToBadRequest("User does not exist");
+            }
+
+            // get checkIn
+            var checkIn = await _checkInRepo.GetCheckIn(checkInRequest.CheckInId);
+            if (checkIn is null)
+            {
+                return ResponseHelper.ToBadRequest("Check-In does not exist");
+            }
+
+            // Todo: return error if CheckedInAt greater than due date
+            checkIn.CheckedInAt = DateTime.Now;
+            if (checkIn.DueDate > checkIn.CheckedInAt)
+            {
+                return ResponseHelper.ToBadRequest("Check-In is past due date");
+            }
+            checkIn.Status = CheckInStatus.Completed;
+
+            var affectedRows = await _checkInRepo.UpdateCheckIn(checkIn);
+            return affectedRows > 0
+                ? ResponseHelper.ToSuccess("Check-In successfull")
+                : ResponseHelper.ToUnprocessable("Failed to Check-In, please try again later!");
+        }
 
         public async Task<ServiceResult> CreateCheckInSchedule(Streak streak)
         {
             var addScheduleResponse = (false, "Unsuccessful");
             switch (streak.Frequency)
             {
-                case Domain.Models.Shared.Enum.StreakFrequency.Daily:
+                case StreakFrequency.Daily:
                     addScheduleResponse = await AddDailyCheckInSchedule(streak);
                     break;
-                case Domain.Models.Shared.Enum.StreakFrequency.Weekly:
+                case StreakFrequency.Weekly:
                     throw new NotImplementedException();
                     break;
-                case Domain.Models.Shared.Enum.StreakFrequency.Monthly:
+                case StreakFrequency.Monthly:
                     throw new NotImplementedException();
                     break;
                 default:
@@ -126,8 +158,24 @@ namespace Strictly.Application.CheckIns
 
             var checkInHistory = await _checkInRepo.GetActiveCheckInSchedule(streakId);
             return checkInHistory.Count > 0
-                ? ResponseHelper.ToSuccess(_mapper.Map<List<CheckIn>>(checkInHistory))
+                ? ResponseHelper.ToSuccess(checkInHistory)
                 : ResponseHelper.ToEmpty("No Check-In to see here");
+        }
+        
+        public async Task<ServiceResult> GetCheckInForToday(Guid userId)
+        {
+            // validate user
+            var user = await _userRepo.GetUserAsync(userId);
+            if (user is null)
+            {
+                return ResponseHelper.ToBadRequest("User does not exist");
+            }
+
+            var checkInList = await _checkInRepo.GetCheckInForDate(userId, DateTime.Today);
+
+            return checkInList.Count > 0
+                ? ResponseHelper.ToSuccess(_mapper.Map<List<GetCheckInForTodayResponse>>(checkInList))
+                : ResponseHelper.ToEmpty("No check-in for today");
         }
 
     }

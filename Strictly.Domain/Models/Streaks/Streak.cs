@@ -1,6 +1,6 @@
-﻿using Strictly.Domain.Models.CheckIns;
+﻿using Strictly.Domain.Enum;
+using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.Shared;
-using Strictly.Domain.Models.Shared.Enum;
 using Strictly.Domain.Models.Tags;
 using Strictly.Domain.Models.Users;
 using System;

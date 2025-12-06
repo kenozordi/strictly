@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Strictly.Application.CheckIns;
 using Strictly.Application.Users;
+using Strictly.Domain.Constants;
 using Strictly.Domain.Models.CheckIns.CreateCheckIn;
-using Strictly.Domain.Models.Shared.Constants;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Streaks.CreateStreak;
 using System;

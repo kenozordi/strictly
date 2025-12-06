@@ -11,5 +11,8 @@ namespace Strictly.Application.CheckIns
     {
         Task<List<CheckIn>> GetActiveCheckInSchedule(Guid streakId);
         Task<int> CreateCheckIn(CheckIn checkIn);
+        Task<int> UpdateCheckIn(CheckIn checkIn);
+        Task<CheckIn?> GetCheckIn(Guid checkInId);
+        Task<List<CheckIn>> GetCheckInForDate(Guid userId, DateTime date);
     }
 }

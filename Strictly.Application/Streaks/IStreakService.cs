@@ -1,4 +1,4 @@
-﻿using Strictly.Domain.Models.Shared.Constants;
+﻿using Strictly.Domain.Constants;
 using Strictly.Domain.Models.Streaks.CreateStreak;
 using System;
 using System.Collections.Generic;

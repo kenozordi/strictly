@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Strictly.Domain.Models.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Domain.Models.Shared.Constants
+namespace Strictly.Domain.Constants
 {
     public class ServiceResult
     {

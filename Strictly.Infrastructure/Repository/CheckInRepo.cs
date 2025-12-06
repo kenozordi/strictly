@@ -32,6 +32,28 @@ namespace Strictly.Infrastructure.Repository
                 .AddAsync(checkIn);
             return await _dbContext.SaveChangesAsync();
         }
+        
+        public async Task<int> UpdateCheckIn(CheckIn checkIn)
+        {
+            _dbContext.CheckIns
+                .Update(checkIn);
+            return await _dbContext.SaveChangesAsync();
+        }
+        
+        public async Task<CheckIn?> GetCheckIn(Guid checkInId)
+        {
+            return await _dbContext.CheckIns
+                .FindAsync(checkInId);
+        }
+        
+        public async Task<List<CheckIn>> GetCheckInForDate(Guid userId, DateTime date)
+        {
+            return await _dbContext.CheckIns.Where(c 
+                => c.UserId == userId
+                && c.DueDate.Date == date.Date)
+                .Include(c => c.Streak)
+                .ToListAsync();
+        }
 
     }
 }
