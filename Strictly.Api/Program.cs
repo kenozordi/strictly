@@ -18,9 +18,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDatabaseContext(builder.Configuration);
-builder.Services.AddServices();
-builder.Services.AddProviders();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

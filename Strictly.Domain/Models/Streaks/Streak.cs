@@ -1,5 +1,6 @@
 ﻿using Strictly.Domain.Enum;
 using Strictly.Domain.Models.CheckIns;
+using Strictly.Domain.Models.Reminders;
 using Strictly.Domain.Models.Shared;
 using Strictly.Domain.Models.Tags;
 using Strictly.Domain.Models.Users;
@@ -23,5 +24,6 @@ namespace Strictly.Domain.Models.Streaks
         public User? User { get; set; }
         public ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
     }
 }

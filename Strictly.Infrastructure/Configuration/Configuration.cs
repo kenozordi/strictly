@@ -11,13 +11,32 @@ using Strictly.Infrastructure.Repository;
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
 using Strictly.Application.Shared;
-using AutoMapper;
 using Strictly.Application.CheckIns;
+using Strictly.Application.Reminders;
+using Strictly.Infrastructure.Configuration.AppSettings;
+using Strictly.Application.Notifications;
+using Strictly.Infrastructure.NotificationProviders;
 
 namespace Strictly.Infrastructure.Configuration
 {
     public static class Configuration
     {
+        /// <summary>
+        /// Helper method to configure all services, providers, utilities, etc
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddInfrastructure(
+            this IServiceCollection services, IConfiguration configuration)
+        {
+            services.BindAppSettings(configuration);
+            services.AddDatabaseContext(configuration);
+            services.AddServices();
+            services.AddProviders();
+            return services;
+        }
+        
         /// <summary>
         /// Add EF Core DB Context usin a connection string from config
         /// </summary>
@@ -47,6 +66,9 @@ namespace Strictly.Infrastructure.Configuration
             services.AddScoped<IStreakService, StreakService>();
             services.AddScoped<ICheckInRepo, CheckInRepo>();
             services.AddScoped<ICheckInService, CheckInService>();
+            services.AddScoped<IReminderRepo, ReminderRepo>();
+            services.AddScoped<IReminderService, ReminderService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }
@@ -60,6 +82,23 @@ namespace Strictly.Infrastructure.Configuration
             this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddScoped<INotificationProviderFactory, NotificationProviderFactory>();
+            services.AddScoped<MailkitProvider>();
+            return services;
+        }
+        
+        /// <summary>
+        /// Configure AppSettings to concrete classes
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection BindAppSettings(
+            this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOptions<EmailSettings>()
+                .Bind(configuration.GetSection("EmailSettings"))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             return services;
         }
