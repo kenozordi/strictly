@@ -2,6 +2,8 @@
 using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.CheckIns.GetCheckIn;
+using Strictly.Domain.Models.Reminders;
+using Strictly.Domain.Models.Reminders.CreateReminder;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Streaks.CreateStreak;
 using Strictly.Domain.Models.Users;
@@ -28,6 +30,12 @@ namespace Strictly.Application.Shared
             CreateMap<CheckIn, GetCheckInForTodayResponse>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.StreakTitle, opt => opt.MapFrom(src => src.Streak.Title))
+                .ReverseMap();
+            CreateMap<CheckIn, GetCheckInScheduleResponse>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ReverseMap();
+
+            CreateMap<Reminder, CreateReminderRequest>()
                 .ReverseMap();
 
             CreateMap<User, GetUserResponse>()

@@ -1,4 +1,5 @@
-﻿using Strictly.Domain.Models.Shared;
+﻿using Strictly.Domain.Models.Reminders;
+using Strictly.Domain.Models.Shared;
 using Strictly.Domain.Models.Streaks;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,6 @@ namespace Strictly.Domain.Models.Users
 
         // Navigation
         public ICollection<Streak> Streaks { get; set; } = new List<Streak>();
+        public ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
     }
 }

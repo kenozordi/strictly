@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.VisualBasic;
 using Strictly.Application.Streaks;
 using Strictly.Application.Users;
 using Strictly.Domain.Constants;
@@ -9,13 +8,6 @@ using Strictly.Domain.Models.CheckIns.CheckIntoStreak;
 using Strictly.Domain.Models.CheckIns.CreateCheckIn;
 using Strictly.Domain.Models.CheckIns.GetCheckIn;
 using Strictly.Domain.Models.Streaks;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Strictly.Application.CheckIns
 {
@@ -78,14 +70,18 @@ namespace Strictly.Application.CheckIns
                 return ResponseHelper.ToBadRequest("Check-In does not exist");
             }
 
-            // Todo: return error if CheckedInAt greater than due date
+            if (checkIn.Status == CheckInStatus.Completed)
+            {
+                return ResponseHelper.ToBadRequest("Check-In is already complete");
+            }
+            
             checkIn.CheckedInAt = DateTime.Now;
             if (checkIn.DueDate > checkIn.CheckedInAt)
             {
                 return ResponseHelper.ToBadRequest("Check-In is past due date");
             }
-            checkIn.Status = CheckInStatus.Completed;
 
+            checkIn.Status = CheckInStatus.Completed;
             var affectedRows = await _checkInRepo.UpdateCheckIn(checkIn);
             return affectedRows > 0
                 ? ResponseHelper.ToSuccess("Check-In successfull")
@@ -123,20 +119,21 @@ namespace Strictly.Application.CheckIns
             {
                 int noOfCheckinCreated = 0;
                 int today = 1;
-                int numOfCheckinsAfterToday = today + (streak.EndDate?.Date - streak.CreatedAt.Date)!.Value.Days;
-                var nextDatePlaceholder = streak.CreatedAt;
-                for (int i = 0; i < numOfCheckinsAfterToday; i++)
+                var time = new TimeSpan(23,59,0); // end of day
+                int numOfCheckins = today + (streak.EndDate?.Date - streak.CreatedAt.Date)!.Value.Days;
+                var dueDatePlaceholder = streak.CreatedAt.Date + time;
+                for (int i = 0; i < numOfCheckins; i++)
                 {
                     var checkIn = new CheckIn()
                     {
-                        DueDate = nextDatePlaceholder,
+                        DueDate = dueDatePlaceholder,
                         StreakId = streak.Id,
                         UserId = streak.UserId,
                         Status = (int)CheckInStatus.Pending
                     };
                     noOfCheckinCreated += await _checkInRepo.CreateCheckIn(checkIn);
 
-                    nextDatePlaceholder = nextDatePlaceholder.AddDays(1);
+                    dueDatePlaceholder = dueDatePlaceholder.AddDays(1);
                 }
 
                 return (true, noOfCheckinCreated.ToString());
@@ -158,10 +155,10 @@ namespace Strictly.Application.CheckIns
 
             var checkInHistory = await _checkInRepo.GetActiveCheckInSchedule(streakId);
             return checkInHistory.Count > 0
-                ? ResponseHelper.ToSuccess(checkInHistory)
+                ? ResponseHelper.ToSuccess(_mapper.Map<List<GetCheckInScheduleResponse>>(checkInHistory))
                 : ResponseHelper.ToEmpty("No Check-In to see here");
         }
-        
+          
         public async Task<ServiceResult> GetCheckInForToday(Guid userId)
         {
             // validate user

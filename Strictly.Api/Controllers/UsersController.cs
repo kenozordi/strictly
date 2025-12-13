@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Strictly.Api.Extensions;
 using Strictly.Application.Users;
-using Strictly.Domain.Models.Users;
 
 namespace Strictly.Api.Controllers
 {
