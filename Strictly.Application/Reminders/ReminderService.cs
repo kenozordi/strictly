@@ -4,6 +4,7 @@ using Strictly.Application.Streaks;
 using Strictly.Application.Users;
 using Strictly.Domain.Constants;
 using Strictly.Domain.Enum;
+using Strictly.Domain.Models.CheckIns.GetCheckIn;
 using Strictly.Domain.Models.Notifications;
 using Strictly.Domain.Models.Reminders;
 using Strictly.Domain.Models.Reminders.CreateReminder;
@@ -17,21 +18,22 @@ namespace Strictly.Application.Reminders
 {
     public class ReminderService : IReminderService
     {
-        protected readonly INotificationService _notificationService;
+        //protected readonly INotificationService _notificationService;
         protected readonly IReminderRepo _reminderRepo;
         protected readonly IStreakRepo _streakRepo;
         protected readonly IUserRepo _userRepo;
         protected readonly IMapper _mapper;
 
         public ReminderService(IMapper mapper, IReminderRepo reminderRepo,
-            IStreakRepo streakRepo, IUserRepo userRepo,
-            INotificationService notificationService)
+            IStreakRepo streakRepo, IUserRepo userRepo
+            //,INotificationService notificationService
+            )
         {
             _mapper = mapper;
             _userRepo = userRepo;
             _streakRepo = streakRepo;
             _reminderRepo = reminderRepo;
-            _notificationService = notificationService;
+            //_notificationService = notificationService;
         }
 
         public async Task<ServiceResult> CreateReminder(CreateReminderRequest createReminderRequest)
@@ -65,23 +67,45 @@ namespace Strictly.Application.Reminders
         
         public async Task<ServiceResult> SendReminder(Guid reminderId)
         {
+            throw new NotImplementedException();
             // get reminder
-            var reminder = await _reminderRepo.GetReminder(reminderId);
+            //var reminder = await _reminderRepo.GetReminder(reminderId);
 
-            if (reminder is null)
+            //if (reminder is null)
+            //{
+            //    return ResponseHelper.ToUnprocessable("Reminder does not exist");
+            //}
+
+            //var notificationRequest = new NotificationRequest()
+            //{
+            //    NotificationType = NotificationType.Email,
+            //    To = reminder.User.Email,
+            //    Subject = reminder.Streak.Title,
+            //    Message = reminder.Message
+            //};
+
+            //return await _notificationService.SendAsync(notificationRequest);
+        }
+        
+        public async Task<ServiceResult> GetActiveReminders(ReminderFrequency reminderFrequency)
+        {
+            switch (reminderFrequency)
             {
-                return ResponseHelper.ToUnprocessable("Reminder does not exist");
+                case ReminderFrequency.Daily:
+                    return await GetDailyActiveReminders();
+                default:
+                    throw new NotImplementedException("No implementation for the Reminder Frequency");
             }
+        }
+        
+        private async Task<ServiceResult> GetDailyActiveReminders()
+        {
+            // get reminders
+            var reminders = await _reminderRepo.GetActiveReminders(ReminderFrequency.Daily);
 
-            var notificationRequest = new NotificationRequest()
-            {
-                NotificationType = NotificationType.Email,
-                To = reminder.User.Email,
-                Subject = reminder.Streak.Title,
-                Message = reminder.Message
-            };
-
-            return await _notificationService.SendAsync(notificationRequest);
+            return reminders.Count > 0
+                ? ResponseHelper.ToSuccess(reminders)
+                : ResponseHelper.ToEmpty("No Reminder to see here");
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Strictly.Application.Streaks;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Users;
@@ -13,11 +14,13 @@ namespace Strictly.Infrastructure.Repository
 {
     public class StreakRepo : IStreakRepo
     {
-        protected AppDbContext _dbContext;
+        protected IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly AppDbContext _dbContext;
 
-        public StreakRepo(AppDbContext dbContext)
+        public StreakRepo(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;   
+            _dbContextFactory = dbContextFactory;
+            _dbContext = _dbContextFactory.CreateDbContext();
         }
 
         public async Task<int> CreateStreak(Streak streak)

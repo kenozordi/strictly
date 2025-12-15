@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35521.163 d17.12
+VisualStudioVersion = 17.12.35521.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Api", "Strictly.Api\Strictly.Api.csproj", "{F97F5F1C-44DC-4AB5-97F9-8DBD725A12F4}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Domain", "Strictly.Domain\Strictly.Domain.csproj", "{8C7B9552-1B2B-4594-9639-75946CEC50DE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Infrastructure", "Strictly.Infrastructure\Strictly.Infrastructure.csproj", "{DE3551A1-C7AD-4952-BC6F-EB91178A0081}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Worker.NotificationProducer", "Strictly.Worker.NotificationProducer\Strictly.Worker.NotificationProducer.csproj", "{11BE8763-9307-41B9-9807-0FB330B86BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DE3551A1-C7AD-4952-BC6F-EB91178A0081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE3551A1-C7AD-4952-BC6F-EB91178A0081}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE3551A1-C7AD-4952-BC6F-EB91178A0081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

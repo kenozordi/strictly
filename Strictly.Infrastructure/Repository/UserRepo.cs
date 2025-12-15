@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Strictly.Application.Users;
 using Strictly.Domain.Models.Users;
 using Strictly.Infrastructure.DBContext;
@@ -12,11 +13,13 @@ namespace Strictly.Infrastructure.Repository
 {
     public class UserRepo : IUserRepo
     {
-        protected AppDbContext _dbContext;
+        protected IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly AppDbContext _dbContext;
 
-        public UserRepo(AppDbContext dbContext)
+        public UserRepo(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;   
+            _dbContextFactory = dbContextFactory;
+            _dbContext = _dbContextFactory.CreateDbContext();
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
