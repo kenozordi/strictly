@@ -38,6 +38,9 @@ namespace Strictly.Application.Shared
             CreateMap<Reminder, CreateReminderRequest>()
                 .ReverseMap();
 
+            CreateMap<Reminder, ReminderNotification>()
+                .ReverseMap();
+
             CreateMap<User, GetUserResponse>()
                 .ReverseMap();
         }

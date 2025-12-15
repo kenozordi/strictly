@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Strictly.Application.Reminders;
+using Strictly.Domain.Enum;
 using Strictly.Domain.Models.Reminders;
 using Strictly.Infrastructure.DBContext;
 using System;
@@ -12,11 +14,13 @@ namespace Strictly.Infrastructure.Repository
 {
     public class ReminderRepo : IReminderRepo
     {
-        protected AppDbContext _dbContext;
+        protected IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly AppDbContext _dbContext;
 
-        public ReminderRepo(AppDbContext dbContext)
+        public ReminderRepo(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;   
+            _dbContextFactory = dbContextFactory;
+            _dbContext = _dbContextFactory.CreateDbContext();   
         }
 
         public async Task<int> CreateReminder(Reminder reminder)
@@ -33,6 +37,25 @@ namespace Strictly.Infrastructure.Repository
                 .Include(r => r.Streak)
                 .Include(r => r.User)
                 .FirstOrDefaultAsync();
+        }
+        
+        public async Task<List<Reminder>> GetActiveReminders(ReminderFrequency reminderFrequency)
+        {
+            return await _dbContext.Reminder
+                .Where(r => r.IsActive)
+                .Where(r => r.UpdatedAt == default || r.UpdatedAt < DateTime.Today)
+                .Where(r => r.Frequency == reminderFrequency)
+                .Include(r => r.User)
+                .Include(r => r.Streak)
+                .Where(r => r.Streak.EndDate >= DateTime.Today)
+                .ToListAsync();
+        }
+        
+        public async Task<int> UpdateReminder(Reminder reminder)
+        {
+            _dbContext.Reminder
+                .Update(reminder);
+            return await _dbContext.SaveChangesAsync();
         }
 
     }

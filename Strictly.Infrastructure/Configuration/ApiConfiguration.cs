@@ -19,7 +19,7 @@ using Strictly.Infrastructure.NotificationProviders;
 
 namespace Strictly.Infrastructure.Configuration
 {
-    public static class Configuration
+    public static class ApiConfiguration
     {
         /// <summary>
         /// Helper method to configure all services, providers, utilities, etc
@@ -27,7 +27,7 @@ namespace Strictly.Infrastructure.Configuration
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddInfrastructure(
+        public static IServiceCollection AddStrictlyToApi(
             this IServiceCollection services, IConfiguration configuration)
         {
             services.BindAppSettings(configuration);
@@ -43,10 +43,10 @@ namespace Strictly.Infrastructure.Configuration
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddDatabaseContext(
+        private static IServiceCollection AddDatabaseContext(
             this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddDbContextFactory<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
@@ -57,7 +57,7 @@ namespace Strictly.Infrastructure.Configuration
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddServices(
+        private static IServiceCollection AddServices(
             this IServiceCollection services)
         {
             services.AddScoped<IUserRepo, UserRepo>();
@@ -78,7 +78,7 @@ namespace Strictly.Infrastructure.Configuration
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddProviders(
+        private static IServiceCollection AddProviders(
             this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
@@ -86,13 +86,13 @@ namespace Strictly.Infrastructure.Configuration
             services.AddScoped<MailkitProvider>();
             return services;
         }
-        
+
         /// <summary>
         /// Configure AppSettings to concrete classes
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection BindAppSettings(
+        private static IServiceCollection BindAppSettings(
             this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<EmailSettings>()
@@ -102,6 +102,6 @@ namespace Strictly.Infrastructure.Configuration
 
             return services;
         }
-
+        
     }
 }

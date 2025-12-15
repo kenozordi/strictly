@@ -1,4 +1,5 @@
 ﻿using Strictly.Domain.Constants;
+using Strictly.Domain.Enum;
 using Strictly.Domain.Models.Reminders;
 using Strictly.Domain.Models.Reminders.CreateReminder;
 using System;
@@ -24,5 +25,12 @@ namespace Strictly.Application.Reminders
         /// <param name="reminderId"></param>
         /// <returns></returns>
         Task<ServiceResult> SendReminder(Guid reminderId);
+
+        /// <summary>
+        /// GetActiveReminders
+        /// </summary>
+        /// <param name="reminderFrequency"></param>
+        /// <returns></returns>
+        Task<ServiceResult> GetActiveReminders(ReminderFrequency reminderFrequency);
     }
 }
