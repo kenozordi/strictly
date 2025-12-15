@@ -37,8 +37,9 @@ namespace Strictly.Application.Shared
 
             CreateMap<Reminder, CreateReminderRequest>()
                 .ReverseMap();
-
             CreateMap<Reminder, ReminderNotification>()
+                .ForMember(dest => dest.StreakTitle, opt => opt.MapFrom(src => src.Streak.Title))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
                 .ReverseMap();
 
             CreateMap<User, GetUserResponse>()

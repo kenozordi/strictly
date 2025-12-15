@@ -68,6 +68,7 @@ namespace Strictly.Infrastructure.Configuration
             services.AddSingleton<ICheckInService, CheckInService>();
             services.AddSingleton<IReminderRepo, ReminderRepo>();
             services.AddSingleton<IReminderService, ReminderService>();
+            services.AddSingleton<INotificationService, NotificationService>();
 
             return services;
         }
@@ -81,6 +82,8 @@ namespace Strictly.Infrastructure.Configuration
             this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddSingleton<INotificationProviderFactory, NotificationProviderFactory>();
+            services.AddSingleton<MailkitProvider>();
             return services;
         }
 
@@ -92,6 +95,11 @@ namespace Strictly.Infrastructure.Configuration
         private static IServiceCollection BindAppSettings(
             this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddOptions<EmailSettings>()
+                .Bind(configuration.GetSection("EmailSettings"))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
             return services;
         }
         

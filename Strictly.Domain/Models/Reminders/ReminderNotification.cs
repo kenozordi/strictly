@@ -15,7 +15,9 @@ namespace Strictly.Domain.Models.Reminders
         public Guid Id { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public Guid StreakId { get; set; }
+        public string? StreakTitle { get; set; }
         public Guid UserId { get; set; }
+        public string? UserEmail { get; set; }
         public ReminderFrequency Frequency { get; set; }
         /// <summary>
         /// The time to send the reminder. it can be earlier than the due time of the checkin for the streak

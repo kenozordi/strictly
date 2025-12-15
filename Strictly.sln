@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Worker.NotificationProducer", "Strictly.Worker.NotificationProducer\Strictly.Worker.NotificationProducer.csproj", "{11BE8763-9307-41B9-9807-0FB330B86BE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strictly.Worker.NotificationConsumer", "Strictly.Worker.NotificationConsumer\Strictly.Worker.NotificationConsumer.csproj", "{56CD510C-70B4-46C3-B28E-80E6163E4F13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11BE8763-9307-41B9-9807-0FB330B86BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56CD510C-70B4-46C3-B28E-80E6163E4F13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56CD510C-70B4-46C3-B28E-80E6163E4F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56CD510C-70B4-46C3-B28E-80E6163E4F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56CD510C-70B4-46C3-B28E-80E6163E4F13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
