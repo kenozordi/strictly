@@ -36,47 +36,91 @@ namespace Strictly.Worker.NotificationProducer.Workers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                try
-                {
-                    if (_logger.IsEnabled(LogLevel.Information))
-                    {
-                        _logger.LogInformation("Reminder Producer running at: {time}", DateTimeOffset.Now);
-                    }
+                await Task.WhenAll([
+                    ProduceDailyReminders(),
+                    ProduceMonthlyReminders(),
+                    ]);
 
-                    var remindersResponse = await _reminderService.GetActiveReminders(ReminderFrequency.Daily);
-                    if (!remindersResponse.IsSuccess)
-                    {
-                        continue;
-                    }
-
-                    List<Reminder> reminders = (List<Reminder>)((BaseResponse<object>)remindersResponse.Data).Data;
-                    if (reminders is null || reminders.Count < 1)
-                    {
-                        continue;
-                    }
-
-                    foreach (var reminder in reminders)
-                    {
-                        var clients = await _producerDatabase.PublishAsync(
-                            $"{CacheKey.Notifications}:{NotificationEvent.Reminder.ToString()}",
-                            JsonConvert.SerializeObject(_mapper.Map<ReminderNotification>(reminder)));
-
-                        reminder.UpdatedAt = DateTime.Now;
-                        await _reminderRepo.UpdateReminder(reminder);
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                    throw;
-                }
-                finally
-                {
-                    // Delay
-                    await Task.Delay(5000, stoppingToken);
-                }
-                
+                // Delay
+                await Task.Delay(5000, stoppingToken);
             }
         }
+
+        protected async Task ProduceDailyReminders()
+        {
+            try
+            {
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Reminder Producer running at: {time}", DateTimeOffset.Now);
+                }
+
+                var remindersResponse = await _reminderService.GetActiveReminders(ReminderFrequency.Daily);
+                if (!remindersResponse.IsSuccess)
+                {
+                    return;
+                }
+
+                List<Reminder> reminders = (List<Reminder>)((BaseResponse<object>)remindersResponse.Data).Data;
+                if (reminders is null || reminders.Count < 1)
+                {
+                    return;
+                }
+
+                foreach (var reminder in reminders)
+                {
+                    var clients = await _producerDatabase.PublishAsync(
+                        $"{CacheKey.Notifications}:{NotificationEvent.Reminder.ToString()}",
+                        JsonConvert.SerializeObject(_mapper.Map<ReminderNotification>(reminder)));
+
+                    reminder.UpdatedAt = DateTime.Now;
+                    await _reminderRepo.UpdateReminder(reminder);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        
+        protected async Task ProduceMonthlyReminders()
+        {
+            try
+            {
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Monthly Reminder Producer running at: {time}", DateTimeOffset.Now);
+                }
+
+                var remindersResponse = await _reminderService.GetActiveReminders(ReminderFrequency.Monthly);
+                if (!remindersResponse.IsSuccess)
+                {
+                    return;
+                }
+
+                List<Reminder> reminders = (List<Reminder>)((BaseResponse<object>)remindersResponse.Data).Data;
+                if (reminders is null || reminders.Count < 1)
+                {
+                    return;
+                }
+
+                foreach (var reminder in reminders)
+                {
+                    var clients = await _producerDatabase.PublishAsync(
+                        $"{CacheKey.Notifications}:{NotificationEvent.Reminder.ToString()}",
+                        JsonConvert.SerializeObject(_mapper.Map<ReminderNotification>(reminder)));
+
+                    reminder.UpdatedAt = DateTime.Now;
+                    await _reminderRepo.UpdateReminder(reminder);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

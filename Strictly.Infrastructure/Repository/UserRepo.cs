@@ -14,16 +14,15 @@ namespace Strictly.Infrastructure.Repository
     public class UserRepo : IUserRepo
     {
         protected IDbContextFactory<AppDbContext> _dbContextFactory;
-        private readonly AppDbContext _dbContext;
 
         public UserRepo(IDbContextFactory<AppDbContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
-            _dbContext = _dbContextFactory.CreateDbContext();
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             return await _dbContext.Users
                 .AsNoTracking()
                 .ToListAsync();
@@ -31,6 +30,7 @@ namespace Strictly.Infrastructure.Repository
 
         public async Task<User?> GetUserAsync(Guid userGuid)
         {
+            var _dbContext = _dbContextFactory.CreateDbContext();
             return await _dbContext.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userGuid);

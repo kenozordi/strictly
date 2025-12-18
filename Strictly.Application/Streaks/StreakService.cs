@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Strictly.Application.CheckIns;
 using Strictly.Application.Users;
 using Strictly.Domain.Constants;
@@ -21,13 +22,15 @@ namespace Strictly.Application.Streaks
         protected readonly IUserRepo _userRepo;
         protected readonly ICheckInService _checkInService;
         protected readonly IMapper _mapper;
+        protected readonly ILogger<StreakService> _logger;
         public StreakService(IStreakRepo streakRepo, IUserRepo userRepo,
-            IMapper mapper, ICheckInService checkInService)
+            IMapper mapper, ICheckInService checkInService, ILogger<StreakService> logger)
         {
             _checkInService = checkInService;
             _streakRepo = streakRepo;
             _userRepo = userRepo;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<ServiceResult> CreateStreak(CreateStreakRequest createStreakRequest)
@@ -45,6 +48,7 @@ namespace Strictly.Application.Streaks
                 return ResponseHelper.ToBadRequest("User does not exist");
             }
 
+            // create streak
             var streak = _mapper.Map<Streak>(createStreakRequest);
             var affectedRows = await _streakRepo.CreateStreak(streak);
             if (affectedRows <= 0)
@@ -52,7 +56,8 @@ namespace Strictly.Application.Streaks
                 return ResponseHelper.ToUnprocessable("Failed to create streak, please try again later!");
             }
 
-            var checkInScheduleResult = await _checkInService.CreateCheckInSchedule(streak);
+            // create check-in schedule
+            var checkInScheduleResult = await _checkInService.CreateCheckInSchedule(streak, createStreakRequest.FirstCheckInDate);
             return checkInScheduleResult.IsSuccess
                 ? ResponseHelper.ToSuccess("Streak created successfully")
                 : ResponseHelper.ToUnprocessable("Failed to create streak, please try again later!"); // rollback streak
@@ -60,6 +65,8 @@ namespace Strictly.Application.Streaks
 
         public async Task<ServiceResult> GetStreakByUserIdAsync(Guid userId)
         {
+            _logger.LogInformation("About to GetStreakByUserIdAsync for {userId}", userId);
+
             // validate userId
             var user = await _userRepo.GetUserAsync(userId);
             if (user == null)

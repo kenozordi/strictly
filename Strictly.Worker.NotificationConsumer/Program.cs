@@ -10,7 +10,7 @@ var connectionStringPlaceholder = new ConnectionStrings();
 builder.Services.AddSingleton<IConnectionMultiplexer>(x =>
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString(nameof(connectionStringPlaceholder.Redis))
 ));
-builder.Services.AddStrictlyToWorker(builder.Configuration);
+builder.AddStrictlyToWorker();
 
 var host = builder.Build();
 host.Run();

@@ -23,6 +23,7 @@ namespace Strictly.Application.Shared
                 .ForMember(dest => dest.Frequency, opt => opt.MapFrom(src => src.Frequency.ToString()))
                 .ReverseMap();
             CreateMap<Streak, CreateStreakRequest>()
+                .ForMember(dest => dest.FirstCheckInDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ReverseMap();
 
             CreateMap<CheckIn, CreateCheckInRequest>()

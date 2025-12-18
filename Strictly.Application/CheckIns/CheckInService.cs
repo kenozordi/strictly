@@ -88,23 +88,22 @@ namespace Strictly.Application.CheckIns
                 : ResponseHelper.ToUnprocessable("Failed to Check-In, please try again later!");
         }
 
-        public async Task<ServiceResult> CreateCheckInSchedule(Streak streak)
+        public async Task<ServiceResult> CreateCheckInSchedule(Streak streak, DateTime firstCheckInDate)
         {
             var addScheduleResponse = (false, "Unsuccessful");
             switch (streak.Frequency)
             {
                 case StreakFrequency.Daily:
-                    addScheduleResponse = await AddDailyCheckInSchedule(streak);
+                    addScheduleResponse = await AddDailyCheckInSchedule(streak, firstCheckInDate);
                     break;
                 case StreakFrequency.Weekly:
                     throw new NotImplementedException();
                     break;
                 case StreakFrequency.Monthly:
-                    throw new NotImplementedException();
+                    addScheduleResponse = await AddMonthlyCheckInSchedule(streak, firstCheckInDate);
                     break;
                 default:
                     throw new NotImplementedException();
-                    break;
             }
 
             return addScheduleResponse.Item1
@@ -112,16 +111,15 @@ namespace Strictly.Application.CheckIns
                 : ResponseHelper.ToUnprocessable($"Check-In schedule failed to generate: {addScheduleResponse.Item2}");
         }
         
-        private async Task<(bool isSuccess, string message)> AddDailyCheckInSchedule(Streak streak)
+        private async Task<(bool isSuccess, string message)> AddDailyCheckInSchedule(Streak streak, DateTime firstCheckInDate)
         {
             // Todo: Wrap this in a DB transaction
             try
             {
                 int noOfCheckinCreated = 0;
                 int today = 1;
-                var time = new TimeSpan(23,59,0); // end of day
-                int numOfCheckins = today + (streak.EndDate?.Date - streak.CreatedAt.Date)!.Value.Days;
-                var dueDatePlaceholder = streak.CreatedAt.Date + time;
+                int numOfCheckins = today + (streak.EndDate.Date - firstCheckInDate.Date).Days;
+                var dueDatePlaceholder = firstCheckInDate;
                 for (int i = 0; i < numOfCheckins; i++)
                 {
                     var checkIn = new CheckIn()
@@ -134,6 +132,36 @@ namespace Strictly.Application.CheckIns
                     noOfCheckinCreated += await _checkInRepo.CreateCheckIn(checkIn);
 
                     dueDatePlaceholder = dueDatePlaceholder.AddDays(1);
+                }
+
+                return (true, noOfCheckinCreated.ToString());
+            }
+            catch (Exception ex)
+            {
+                return (false, "Something went wrong, An Exception Occured");
+            }
+        }
+        
+        private async Task<(bool isSuccess, string message)> AddMonthlyCheckInSchedule(Streak streak, DateTime firstCheckInDate)
+        {
+            // Todo: Wrap this in a DB transaction
+            try
+            {
+                int noOfCheckinCreated = 0;
+                int numOfCheckins = ((streak.EndDate.Year - firstCheckInDate.Year) * 12) + streak.EndDate.Month - firstCheckInDate.Month;
+                var dueDatePlaceholder = firstCheckInDate;
+                for (int i = 0; i < numOfCheckins; i++)
+                {
+                    var checkIn = new CheckIn()
+                    {
+                        DueDate = dueDatePlaceholder,
+                        StreakId = streak.Id,
+                        UserId = streak.UserId,
+                        Status = (int)CheckInStatus.Pending
+                    };
+                    noOfCheckinCreated += await _checkInRepo.CreateCheckIn(checkIn);
+
+                    dueDatePlaceholder = dueDatePlaceholder.AddMonths(1);
                 }
 
                 return (true, noOfCheckinCreated.ToString());

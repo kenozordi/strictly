@@ -16,6 +16,9 @@ using Strictly.Application.Reminders;
 using Strictly.Infrastructure.Configuration.AppSettings;
 using Strictly.Application.Notifications;
 using Strictly.Infrastructure.NotificationProviders;
+using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -27,14 +30,15 @@ namespace Strictly.Infrastructure.Configuration
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddStrictlyToWorker(
-            this IServiceCollection services, IConfiguration configuration)
+        public static HostApplicationBuilder AddStrictlyToWorker(
+            this HostApplicationBuilder hostApplicationBuilder)
         {
-            services.BindAppSettings(configuration);
-            services.AddDatabaseContext(configuration);
-            services.AddServices();
-            services.AddProviders();
-            return services;
+            hostApplicationBuilder.Services.BindAppSettings(hostApplicationBuilder.Configuration);
+            hostApplicationBuilder.Services.AddDatabaseContext(hostApplicationBuilder.Configuration);
+            hostApplicationBuilder.Services.AddServices();
+            hostApplicationBuilder.Services.AddProviders();
+            hostApplicationBuilder.AddLoggingAndMonitoring();
+            return hostApplicationBuilder;
         }
 
         /// <summary>
@@ -85,6 +89,19 @@ namespace Strictly.Infrastructure.Configuration
             services.AddSingleton<INotificationProviderFactory, NotificationProviderFactory>();
             services.AddSingleton<MailkitProvider>();
             return services;
+        }
+
+        /// <summary>
+        /// Configure logging and monitoring
+        /// </summary>
+        /// <returns></returns>
+        private static HostApplicationBuilder AddLoggingAndMonitoring(
+            this HostApplicationBuilder hostApplicationBuilder)
+        {
+            hostApplicationBuilder.Logging.AddSerilog(new LoggerConfiguration()
+                .ReadFrom.Configuration(hostApplicationBuilder.Configuration)
+                .CreateLogger());
+            return hostApplicationBuilder;
         }
 
         /// <summary>

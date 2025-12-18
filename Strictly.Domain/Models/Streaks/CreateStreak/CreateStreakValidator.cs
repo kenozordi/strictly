@@ -17,6 +17,7 @@ namespace Strictly.Domain.Models.Streaks.CreateStreak
             RuleFor(c => c.Description).NotEmpty();
             RuleFor(c => c.UserId).NotEmpty();
             RuleFor(c => c.EndDate).NotEmpty();
+            RuleFor(c => c.FirstCheckInDate).NotEmpty();
         }
     }
 }

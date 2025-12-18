@@ -13,7 +13,7 @@ namespace Strictly.Infrastructure.DBContext
     {
         public AppDbContext CreateDbContext(string[] args)
         {
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../Strictly");
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../Strictly.API");
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)

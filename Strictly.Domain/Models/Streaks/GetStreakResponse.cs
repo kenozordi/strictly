@@ -13,7 +13,7 @@ namespace Strictly.Domain.Models.Streaks
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? Frequency { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
     }
 }

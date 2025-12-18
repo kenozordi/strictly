@@ -93,6 +93,8 @@ namespace Strictly.Application.Reminders
             {
                 case ReminderFrequency.Daily:
                     return await GetDailyActiveReminders();
+                case ReminderFrequency.Monthly:
+                    return await GetMonthlyActiveReminders();
                 default:
                     throw new NotImplementedException("No implementation for the Reminder Frequency");
             }
@@ -102,6 +104,21 @@ namespace Strictly.Application.Reminders
         {
             // get reminders
             var reminders = await _reminderRepo.GetActiveReminders(ReminderFrequency.Daily);
+
+            return reminders.Count > 0
+                ? ResponseHelper.ToSuccess(reminders)
+                : ResponseHelper.ToEmpty("No Reminder to see here");
+        }
+
+        private async Task<ServiceResult> GetMonthlyActiveReminders(bool filterByTime = false)
+        {
+            // get reminders
+            var reminders = await _reminderRepo.GetActiveReminders(ReminderFrequency.Monthly);
+            reminders = reminders.Where(r => r.DayOfMonth == DateTime.Today.Day).ToList();
+            reminders = filterByTime ? reminders.Where(r 
+                => r.Time < DateTime.Now.TimeOfDay.Subtract(TimeSpan.FromMinutes(5)) // buffer of 2.5 minutes before reminder due time
+                && r.Time > DateTime.Now.TimeOfDay.Add(TimeSpan.FromMinutes(5))) // buffer of 2.5 minutes after reminder due time
+                .ToList() : reminders;
 
             return reminders.Count > 0
                 ? ResponseHelper.ToSuccess(reminders)
