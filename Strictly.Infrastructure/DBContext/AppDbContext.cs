@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.Reminders;
+using Strictly.Domain.Models.StreakParticipants;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Tags;
 using Strictly.Domain.Models.Users;
@@ -22,6 +23,7 @@ namespace Strictly.Infrastructure.DBContext
         public DbSet<CheckIn> CheckIns => Set<CheckIn>();
         public DbSet<Tag> Tags => Set<Tag>();
         public DbSet<Reminder> Reminder => Set<Reminder>();
+        public DbSet<StreakParticipant> StreakParticipant => Set<StreakParticipant>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,6 +65,12 @@ namespace Strictly.Infrastructure.DBContext
                 .HasOne(r => r.User)
                 .WithMany(u => u.Reminders)
                 .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<StreakParticipant>()
+                .HasOne(r => r.Streak)
+                .WithMany(s => s.StreakParticipant)
+                .HasForeignKey(r => r.StreakId)
                 .OnDelete(DeleteBehavior.NoAction);
 
         }

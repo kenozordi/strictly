@@ -2,6 +2,7 @@
 using Strictly.Domain.Models.CheckIns;
 using Strictly.Domain.Models.Reminders;
 using Strictly.Domain.Models.Shared;
+using Strictly.Domain.Models.StreakParticipants; 
 using Strictly.Domain.Models.Tags;
 using Strictly.Domain.Models.Users;
 using System;
@@ -25,5 +26,6 @@ namespace Strictly.Domain.Models.Streaks
         public ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         public ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
+        public ICollection<StreakParticipant> StreakParticipant { get; set; } = new List<StreakParticipant>();
     }
 }

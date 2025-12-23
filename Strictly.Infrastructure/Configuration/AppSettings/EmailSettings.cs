@@ -19,6 +19,17 @@ namespace Strictly.Infrastructure.Configuration.AppSettings
         public string? Passord { get; set; }
         [Required]
         public string? From { get; set; }
+        [Required]
+        public EmailTemplate? Templates { get; set; }
+    }
+
+    public class EmailTemplate
+    {
+        [Required]
+        public string? BasePath { get; set; }
+
+        [Required]
+        public string? Reminder { get; set; }
     }
 
 }

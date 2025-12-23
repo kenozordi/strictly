@@ -15,10 +15,11 @@ using Strictly.Application.CheckIns;
 using Strictly.Application.Reminders;
 using Strictly.Infrastructure.Configuration.AppSettings;
 using Strictly.Application.Notifications;
-using Strictly.Infrastructure.NotificationProviders;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Strictly.Application.Streaks.StreakFrequencies;
+using Strictly.Infrastructure.Notifications.Providers;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -73,6 +74,9 @@ namespace Strictly.Infrastructure.Configuration
             services.AddScoped<IReminderRepo, ReminderRepo>();
             services.AddScoped<IReminderService, ReminderService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IStreakFrequencyFactory, StreakFrequencyFactory>();
+            services.AddScoped<DailyStreakService>();
+            services.AddScoped<MonthlyStreakService>();
 
             return services;
         }

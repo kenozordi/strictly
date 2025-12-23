@@ -12,7 +12,7 @@ namespace Strictly.Domain.Models.Reminders
 {
     public class ReminderNotification
     {
-        public Guid Id { get; set; }
+        public Guid ReminderId { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public Guid StreakId { get; set; }
         public string? StreakTitle { get; set; }
@@ -32,6 +32,8 @@ namespace Strictly.Domain.Models.Reminders
         /// </summary>
         public int DayOfMonth { get; set; }
         public string? Message{ get; set; }
+        public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
+        public string? ErrorMessage { get; set; }
 
     }
 }

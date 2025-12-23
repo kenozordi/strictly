@@ -46,7 +46,7 @@ namespace Strictly.Infrastructure.Repository
                 .Where(r => r.IsActive)
                 .Where(r => r.Streak.EndDate >= DateTime.Today)
                 .Where(r => r.Frequency == reminderFrequency)
-                .Where(r => r.UpdatedAt == default || r.UpdatedAt < DateTime.Today)
+                .Where(r => r.UpdatedAt == default || DateTime.Now >= r.UpdatedAt.Value.AddDays(1))
                 .Include(r => r.User)
                 .Include(r => r.Streak)
                 .ToListAsync();

@@ -21,7 +21,22 @@ namespace Strictly.Application.Streaks
         /// Get streak by userId
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns><(HTTP StatusCode, success/failed response)></returns>
-        Task<ServiceResult> GetStreakByUserIdAsync(Guid userId);
+        /// <returns></returns>
+        Task<ServiceResult> GetStreakCreatedByUserIdAsync(Guid userId);
+
+        /// <summary>
+        /// Get streak by userId
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<ServiceResult> GetStreaksByUserIdAsync(Guid userId);
+
+        /// <summary>
+        /// Get streak by userId
+        /// </summary>
+        /// <param name="streakId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<ServiceResult> AddStreakParticipant(Guid streakId, Guid userId);
     }
 }

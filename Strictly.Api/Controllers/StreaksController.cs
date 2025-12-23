@@ -22,7 +22,7 @@ namespace Strictly.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetStreakByUserIdAsync([FromRoute] Guid userId)
         {
-            var controllerResponse = (await _streakService.GetStreakByUserIdAsync(userId)).FormatResponse();
+            var controllerResponse = (await _streakService.GetStreaksByUserIdAsync(userId)).FormatResponse();
             return StatusCode(controllerResponse.HttpStatusCode, controllerResponse.Response);
         }
 

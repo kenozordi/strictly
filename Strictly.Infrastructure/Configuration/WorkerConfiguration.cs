@@ -15,10 +15,13 @@ using Strictly.Application.CheckIns;
 using Strictly.Application.Reminders;
 using Strictly.Infrastructure.Configuration.AppSettings;
 using Strictly.Application.Notifications;
-using Strictly.Infrastructure.NotificationProviders;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Strictly.Application.Streaks.StreakFrequencies;
+using Strictly.Infrastructure.Notifications.Providers;
+using Strictly.Infrastructure.Notifications.AuditLoggers;
+using Newtonsoft.Json;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -37,6 +40,11 @@ namespace Strictly.Infrastructure.Configuration
             hostApplicationBuilder.Services.AddDatabaseContext(hostApplicationBuilder.Configuration);
             hostApplicationBuilder.Services.AddServices();
             hostApplicationBuilder.Services.AddProviders();
+            hostApplicationBuilder.Services.AddSingleton<JsonSerializerSettings>(_ =>
+            new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
             hostApplicationBuilder.AddLoggingAndMonitoring();
             return hostApplicationBuilder;
         }
@@ -73,6 +81,9 @@ namespace Strictly.Infrastructure.Configuration
             services.AddSingleton<IReminderRepo, ReminderRepo>();
             services.AddSingleton<IReminderService, ReminderService>();
             services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<IStreakFrequencyFactory, StreakFrequencyFactory>();
+            services.AddSingleton<DailyStreakService>();
+            services.AddSingleton<MonthlyStreakService>();
 
             return services;
         }
@@ -88,6 +99,7 @@ namespace Strictly.Infrastructure.Configuration
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSingleton<INotificationProviderFactory, NotificationProviderFactory>();
             services.AddSingleton<MailkitProvider>();
+            services.AddSingleton<INotificationAuditLogger, RedisAuditLogger>();
             return services;
         }
 
