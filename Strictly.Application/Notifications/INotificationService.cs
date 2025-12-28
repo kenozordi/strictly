@@ -1,4 +1,5 @@
 ﻿using Strictly.Domain.Constants;
+using Strictly.Domain.Enum;
 using Strictly.Domain.Models.Notifications;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Strictly.Application.Notifications
 {
     public interface INotificationService
     {
+        Task<ServiceResult> AddToQueue<T>(NotificationEvent notificationEvent, T notification);
         Task<ServiceResult> SendAsync(NotificationRequest notificationRequest);
     }
 }

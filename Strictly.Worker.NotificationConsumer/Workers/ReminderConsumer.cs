@@ -66,7 +66,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     {
                         reminderNotification.UpdatedAt = DateTime.Now;
                         reminderNotification.Status = NotificationStatus.Unprocessible;
-                        await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Consumer, reminderNotification);
+                        await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
 
                         reminder!.UpdatedAt = DateTime.Now;
                         await _reminderRepo.UpdateReminder(reminder);
@@ -77,7 +77,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     {
                         reminderNotification.UpdatedAt = DateTime.Now;
                         reminderNotification.Status = NotificationStatus.Expired;
-                        await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Consumer, reminderNotification);
+                        await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
                         return;
                     }
                     
@@ -85,7 +85,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     {
                         reminderNotification.UpdatedAt = DateTime.Now;
                         reminderNotification.Status = NotificationStatus.Expired;
-                        await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Consumer, reminderNotification);
+                        await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
 
                         reminder!.UpdatedAt = DateTime.Now;
                         await _reminderRepo.UpdateReminder(reminder);
@@ -104,11 +104,12 @@ namespace Strictly.Worker.NotificationProducer.Workers
                         Subject = reminderNotification.StreakTitle,
                         Message = emailTemplate
                     };
+
                     var notificationResponse = await _notificationService.SendAsync(notificationRequest);
 
                     reminderNotification.UpdatedAt = DateTime.Now;
                     reminderNotification.Status = NotificationStatus.Queued;
-                    await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Consumer, reminderNotification);
+                    await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
 
                     reminder!.UpdatedAt = DateTime.Now;
                     await _reminderRepo.UpdateReminder(reminder);

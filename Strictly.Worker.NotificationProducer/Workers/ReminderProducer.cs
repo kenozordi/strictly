@@ -19,12 +19,12 @@ namespace Strictly.Worker.NotificationProducer.Workers
         private readonly ILogger<ReminderProducer> _logger;
         private readonly IConnectionMultiplexer _redisCache;
         private readonly IReminderService _reminderService;
-        private readonly IReminderRepo _reminderRepo;
+        private readonly INotificationService _notificationService;
         private readonly IDatabase _producerDatabase;
         private readonly IMapper _mapper;
 
         public ReminderProducer(ILogger<ReminderProducer> logger,
-            IConnectionMultiplexer redisCache, IReminderRepo reminderRepo,
+            IConnectionMultiplexer redisCache, INotificationService notificationService,
             IMapper mapper, IReminderService reminderService,
             INotificationAuditLogger auditLogger, JsonSerializerSettings serializerSettings)
         {
@@ -32,7 +32,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
             _mapper = mapper;
             _redisCache = redisCache;
             _auditLogger = auditLogger;
-            _reminderRepo = reminderRepo;
+            _notificationService = notificationService;
             _reminderService = reminderService;
             _producerDatabase = _redisCache.GetDatabase();
             _serializerSettings = serializerSettings;
@@ -43,8 +43,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.WhenAll([
-                    ProduceDailyReminders(),
-                    //ProduceMonthlyReminders(),
+                    ProduceReminders(ReminderFrequency.Daily)
                     ]);
 
                 // Delay
@@ -52,7 +51,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
             }
         }
 
-        protected async Task ProduceDailyReminders()
+        protected async Task ProduceReminders(ReminderFrequency reminderFrequency)
         {
             try
             {
@@ -61,7 +60,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     _logger.LogInformation("Reminder Producer running at: {time}", DateTimeOffset.Now);
                 }
 
-                var remindersResponse = await _reminderService.GetDueReminders(ReminderFrequency.Daily);
+                var remindersResponse = await _reminderService.GetDueReminders(reminderFrequency);
                 if (!remindersResponse.IsSuccess)
                 {
                     return;
@@ -76,61 +75,23 @@ namespace Strictly.Worker.NotificationProducer.Workers
                 foreach (var reminder in reminders)
                 {
                     var reminderNotification = _mapper.Map<ReminderNotification>(reminder);
-                    var clients = await _producerDatabase.PublishAsync(
-                        $"{CacheKey.Notifications}:{_NotificationEvent.ToString()}",
-                        JsonConvert.SerializeObject(reminderNotification, _serializerSettings));
+                    var result = await _notificationService.AddToQueue(_NotificationEvent, reminderNotification);
 
                     reminderNotification.UpdatedAt = DateTime.Now;
-                    reminderNotification.Status = NotificationStatus.Queued;
-                    await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Producer, reminderNotification); // add status, errormessage to logs
+                    reminderNotification.Status = result.IsSuccess ? NotificationStatus.Queued : NotificationStatus.Unprocessible;
+                    reminderNotification.ErrorMessage = result.IsSuccess ? string.Empty : $"{result.Error.Title}:{result.Error.Detail}";
+                    await _auditLogger.LogProcessedNotification(_NotificationEvent, StrictlyClient.Producer, reminderNotification); // add status, errormessage to logs
+
+                    _logger.LogInformation("Result from adding reminder to queue. {@result}", result);
                 }
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "An Exception occured");
                 throw;
             }
         }
         
-        protected async Task ProduceMonthlyReminders()
-        {
-            try
-            {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    _logger.LogInformation("Monthly Reminder Producer running at: {time}", DateTimeOffset.Now);
-                }
-
-                var remindersResponse = await _reminderService.GetDueReminders(ReminderFrequency.Monthly);
-                if (!remindersResponse.IsSuccess)
-                {
-                    return;
-                }
-
-                List<Reminder> reminders = (List<Reminder>)((BaseResponse<object>)remindersResponse.Data).Data;
-                if (reminders is null || reminders.Count < 1)
-                {
-                    return;
-                }
-
-                foreach (var reminder in reminders)
-                {
-                    var notificationReminder = _mapper.Map<ReminderNotification>(reminder);
-                    var clients = await _producerDatabase.PublishAsync(
-                        $"{CacheKey.Notifications}:{NotificationEvent.Reminder.ToString()}",
-                        JsonConvert.SerializeObject(notificationReminder, _serializerSettings));
-
-                    notificationReminder.UpdatedAt = DateTime.Now;
-                    notificationReminder.Status = NotificationStatus.Queued;
-                    await _auditLogger.LogProcessedNotification(_NotificationEvent, NotificationStage.Producer, notificationReminder); // add status, errormessage to logs
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-        }
 
     }
 }

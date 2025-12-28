@@ -19,7 +19,7 @@ namespace Strictly.Application.Notifications
         /// <returns></returns>
         Task<bool> LogProcessedNotification(
             NotificationEvent notificationEvent,
-            NotificationStage notificationStage,
+            Domain.Enum.StrictlyClient notificationStage,
             object notification);
     }
 }

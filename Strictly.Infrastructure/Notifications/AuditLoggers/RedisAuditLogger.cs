@@ -28,8 +28,8 @@ namespace Strictly.Infrastructure.Notifications.AuditLoggers
         }
 
         public async Task<bool> LogProcessedNotification(
-            NotificationEvent notificationEvent, 
-            NotificationStage notificationStage, 
+            NotificationEvent notificationEvent,
+            Domain.Enum.StrictlyClient notificationStage, 
             object notification)
         {
             var db = _redisCache.GetDatabase();

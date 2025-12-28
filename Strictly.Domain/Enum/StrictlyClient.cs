@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Strictly.Domain.Enum
 {
-    public enum NotificationStage
+    public enum StrictlyClient
     {
         Producer,
-        Consumer
+        Consumer,
+        Api
     }
 }

@@ -32,4 +32,9 @@
     <ProjectReference Include="..\Strictly.Application\Strictly.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Notifications\Providers\Message\" />
+    <Folder Include="Notifications\Providers\Queue\" />
+  </ItemGroup>
+
 </Project>
