@@ -88,62 +88,30 @@ namespace Strictly.Application.CheckIns
                 : ResponseHelper.ToUnprocessable("Failed to Check-In, please try again later!");
         }
 
-        public async Task<ServiceResult> CreateCheckInSchedule(Streak streak)
-        {
-            var addScheduleResponse = (false, "Unsuccessful");
-            switch (streak.Frequency)
-            {
-                case StreakFrequency.Daily:
-                    addScheduleResponse = await AddDailyCheckInSchedule(streak);
-                    break;
-                case StreakFrequency.Weekly:
-                    throw new NotImplementedException();
-                    break;
-                case StreakFrequency.Monthly:
-                    throw new NotImplementedException();
-                    break;
-                default:
-                    throw new NotImplementedException();
-                    break;
-            }
+        //public async Task<ServiceResult> CreateCheckInSchedule(Streak streak, DateTime firstCheckInDate)
+        //{
+        //    var addScheduleResponse = (false, "Unsuccessful");
+        //    switch (streak.Frequency)
+        //    {
+        //        case StreakFrequency.Daily:
+        //            addScheduleResponse = await AddDailyCheckInSchedule(streak, firstCheckInDate);
+        //            break;
+        //        case StreakFrequency.Weekly:
+        //            throw new NotImplementedException();
+        //            break;
+        //        case StreakFrequency.Monthly:
+        //            addScheduleResponse = await AddMonthlyCheckInSchedule(streak, firstCheckInDate);
+        //            break;
+        //        default:
+        //            throw new NotImplementedException();
+        //    }
 
-            return addScheduleResponse.Item1
-                ? ResponseHelper.ToSuccess("Check-In schedule generated successfully")
-                : ResponseHelper.ToUnprocessable($"Check-In schedule failed to generate: {addScheduleResponse.Item2}");
-        }
+        //    return addScheduleResponse.Item1
+        //        ? ResponseHelper.ToSuccess("Check-In schedule generated successfully")
+        //        : ResponseHelper.ToUnprocessable($"Check-In schedule failed to generate: {addScheduleResponse.Item2}");
+        //}
         
-        private async Task<(bool isSuccess, string message)> AddDailyCheckInSchedule(Streak streak)
-        {
-            // Todo: Wrap this in a DB transaction
-            try
-            {
-                int noOfCheckinCreated = 0;
-                int today = 1;
-                var time = new TimeSpan(23,59,0); // end of day
-                int numOfCheckins = today + (streak.EndDate?.Date - streak.CreatedAt.Date)!.Value.Days;
-                var dueDatePlaceholder = streak.CreatedAt.Date + time;
-                for (int i = 0; i < numOfCheckins; i++)
-                {
-                    var checkIn = new CheckIn()
-                    {
-                        DueDate = dueDatePlaceholder,
-                        StreakId = streak.Id,
-                        UserId = streak.UserId,
-                        Status = (int)CheckInStatus.Pending
-                    };
-                    noOfCheckinCreated += await _checkInRepo.CreateCheckIn(checkIn);
-
-                    dueDatePlaceholder = dueDatePlaceholder.AddDays(1);
-                }
-
-                return (true, noOfCheckinCreated.ToString());
-            }
-            catch (Exception ex)
-            {
-                return (false, "Something went wrong, An Exception Occured");
-            }
-        }
-
+        
         public async Task<ServiceResult> GetActiveCheckInSchedule(Guid streakId)
         {
             // validate streakId

@@ -119,6 +119,36 @@ namespace Strictly.Infrastructure.Migrations
                     b.ToTable("Reminder");
                 });
 
+            modelBuilder.Entity("Strictly.Domain.Models.StreakParticipants.StreakParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("StreakId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StreakId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StreakParticipant");
+                });
+
             modelBuilder.Entity("Strictly.Domain.Models.Streaks.Streak", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,7 +161,7 @@ namespace Strictly.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Frequency")
@@ -255,6 +285,25 @@ namespace Strictly.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Strictly.Domain.Models.StreakParticipants.StreakParticipant", b =>
+                {
+                    b.HasOne("Strictly.Domain.Models.Streaks.Streak", "Streak")
+                        .WithMany("StreakParticipant")
+                        .HasForeignKey("StreakId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Strictly.Domain.Models.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Streak");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Strictly.Domain.Models.Streaks.Streak", b =>
                 {
                     b.HasOne("Strictly.Domain.Models.Users.User", "User")
@@ -271,6 +320,8 @@ namespace Strictly.Infrastructure.Migrations
                     b.Navigation("CheckIns");
 
                     b.Navigation("Reminders");
+
+                    b.Navigation("StreakParticipant");
                 });
 
             modelBuilder.Entity("Strictly.Domain.Models.Users.User", b =>

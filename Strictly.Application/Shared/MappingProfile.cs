@@ -23,6 +23,7 @@ namespace Strictly.Application.Shared
                 .ForMember(dest => dest.Frequency, opt => opt.MapFrom(src => src.Frequency.ToString()))
                 .ReverseMap();
             CreateMap<Streak, CreateStreakRequest>()
+                .ForMember(dest => dest.FirstCheckInDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ReverseMap();
 
             CreateMap<CheckIn, CreateCheckInRequest>()
@@ -37,8 +38,13 @@ namespace Strictly.Application.Shared
 
             CreateMap<Reminder, CreateReminderRequest>()
                 .ReverseMap();
-
             CreateMap<Reminder, ReminderNotification>()
+                .ForMember(dest => dest.ReminderId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.StreakTitle, opt => opt.MapFrom(src => src.Streak.Title))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.StreakId, opt => opt.MapFrom(src => src.Streak.Id))
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<User, GetUserResponse>()

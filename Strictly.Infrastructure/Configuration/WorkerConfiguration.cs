@@ -15,7 +15,13 @@ using Strictly.Application.CheckIns;
 using Strictly.Application.Reminders;
 using Strictly.Infrastructure.Configuration.AppSettings;
 using Strictly.Application.Notifications;
-using Strictly.Infrastructure.NotificationProviders;
+using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Strictly.Application.Streaks.StreakFrequencies;
+using Strictly.Infrastructure.Notifications.Providers;
+using Strictly.Infrastructure.Notifications.AuditLoggers;
+using Newtonsoft.Json;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -27,14 +33,20 @@ namespace Strictly.Infrastructure.Configuration
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddStrictlyToWorker(
-            this IServiceCollection services, IConfiguration configuration)
+        public static HostApplicationBuilder AddStrictlyToWorker(
+            this HostApplicationBuilder hostApplicationBuilder)
         {
-            services.BindAppSettings(configuration);
-            services.AddDatabaseContext(configuration);
-            services.AddServices();
-            services.AddProviders();
-            return services;
+            hostApplicationBuilder.Services.BindAppSettings(hostApplicationBuilder.Configuration);
+            hostApplicationBuilder.Services.AddDatabaseContext(hostApplicationBuilder.Configuration);
+            hostApplicationBuilder.Services.AddServices();
+            hostApplicationBuilder.Services.AddProviders();
+            hostApplicationBuilder.Services.AddSingleton<JsonSerializerSettings>(_ =>
+            new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            hostApplicationBuilder.AddLoggingAndMonitoring();
+            return hostApplicationBuilder;
         }
 
         /// <summary>
@@ -68,6 +80,10 @@ namespace Strictly.Infrastructure.Configuration
             services.AddSingleton<ICheckInService, CheckInService>();
             services.AddSingleton<IReminderRepo, ReminderRepo>();
             services.AddSingleton<IReminderService, ReminderService>();
+            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<IStreakFrequencyFactory, StreakFrequencyFactory>();
+            services.AddSingleton<DailyStreakService>();
+            services.AddSingleton<MonthlyStreakService>();
 
             return services;
         }
@@ -81,7 +97,23 @@ namespace Strictly.Infrastructure.Configuration
             this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddSingleton<INotificationProviderFactory, NotificationProviderFactory>();
+            services.AddSingleton<MailkitProvider>();
+            services.AddSingleton<INotificationAuditLogger, RedisAuditLogger>();
             return services;
+        }
+
+        /// <summary>
+        /// Configure logging and monitoring
+        /// </summary>
+        /// <returns></returns>
+        private static HostApplicationBuilder AddLoggingAndMonitoring(
+            this HostApplicationBuilder hostApplicationBuilder)
+        {
+            hostApplicationBuilder.Logging.AddSerilog(new LoggerConfiguration()
+                .ReadFrom.Configuration(hostApplicationBuilder.Configuration)
+                .CreateLogger());
+            return hostApplicationBuilder;
         }
 
         /// <summary>
@@ -92,6 +124,11 @@ namespace Strictly.Infrastructure.Configuration
         private static IServiceCollection BindAppSettings(
             this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddOptions<EmailSettings>()
+                .Bind(configuration.GetSection("EmailSettings"))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
             return services;
         }
         

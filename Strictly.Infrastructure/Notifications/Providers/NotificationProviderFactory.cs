@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Infrastructure.NotificationProviders
+namespace Strictly.Infrastructure.Notifications.Providers
 {
     public class NotificationProviderFactory : INotificationProviderFactory
     {

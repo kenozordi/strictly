@@ -87,21 +87,35 @@ namespace Strictly.Application.Reminders
             //return await _notificationService.SendAsync(notificationRequest);
         }
         
-        public async Task<ServiceResult> GetActiveReminders(ReminderFrequency reminderFrequency)
+        public async Task<ServiceResult> GetDueReminders(ReminderFrequency reminderFrequency)
         {
             switch (reminderFrequency)
             {
                 case ReminderFrequency.Daily:
-                    return await GetDailyActiveReminders();
+                    return await GetDueReminders(ReminderFrequency.Daily, [ReminderFilterOptions.Time]);
+                case ReminderFrequency.Monthly:
+                    return await GetDueReminders(ReminderFrequency.Monthly, [ReminderFilterOptions.Time, ReminderFilterOptions.DayOfMonth]);
                 default:
                     throw new NotImplementedException("No implementation for the Reminder Frequency");
             }
         }
         
-        private async Task<ServiceResult> GetDailyActiveReminders()
+        private async Task<ServiceResult> GetDueReminders(
+            ReminderFrequency reminderFrequency, 
+            ReminderFilterOptions[] filterOptions)
         {
-            // get reminders
-            var reminders = await _reminderRepo.GetActiveReminders(ReminderFrequency.Daily);
+            var reminders = await _reminderRepo.GetActiveReminders(reminderFrequency);
+
+            reminders = filterOptions.Contains(ReminderFilterOptions.DayOfMonth) // refactor andmove to repo
+                ? reminders.Where(
+                    r => r.DayOfMonth == DateTime.Today.Day).ToList() 
+                : reminders;
+            reminders = filterOptions.Contains(ReminderFilterOptions.Time) 
+                ? reminders.Where(
+                    r => DateTime.Now.TimeOfDay <= r.Time
+                    && DateTime.Now.TimeOfDay >= r.Time.Subtract(TimeSpan.FromMinutes(5))) // buffer of 2.5 minutes before reminder due time
+                .ToList() 
+                : reminders;
 
             return reminders.Count > 0
                 ? ResponseHelper.ToSuccess(reminders)

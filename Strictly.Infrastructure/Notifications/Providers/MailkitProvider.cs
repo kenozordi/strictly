@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Infrastructure.NotificationProviders
+namespace Strictly.Infrastructure.Notifications.Providers
 {
     public class MailkitProvider : INotificationProvider
     {
@@ -56,7 +56,7 @@ namespace Strictly.Infrastructure.NotificationProviders
             {
                 await smtp.DisconnectAsync(true);
             }
-            
+
         }
     }
 }

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Strictly.Worker.NotificationProducer.Enums
+namespace Strictly.Domain.Enum
 {
-    public enum NotificationEvent
+    public enum ReminderFilterOptions
     {
-        Reminder
+        Time,
+        DayOfMonth,
+        Month
     }
 }

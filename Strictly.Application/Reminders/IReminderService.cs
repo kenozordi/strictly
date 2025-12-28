@@ -31,6 +31,6 @@ namespace Strictly.Application.Reminders
         /// </summary>
         /// <param name="reminderFrequency"></param>
         /// <returns></returns>
-        Task<ServiceResult> GetActiveReminders(ReminderFrequency reminderFrequency);
+        Task<ServiceResult> GetDueReminders(ReminderFrequency reminderFrequency);
     }
 }
