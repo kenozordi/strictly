@@ -26,6 +26,8 @@ namespace Strictly.Domain.Models.Reminders.CreateReminder
             RuleFor(c => c.Message)
                 .NotEmpty()
                 .MaximumLength(100);
+            RuleFor(c => c.Level)
+                .NotEmpty();
         }
     }
 }

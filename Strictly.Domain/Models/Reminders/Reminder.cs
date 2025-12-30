@@ -28,7 +28,12 @@ namespace Strictly.Domain.Models.Reminders
         /// </summary>
         public int DayOfMonth { get; set; }
         public string? Message{ get; set; }
+        public ReminderLevel Level { get; set; } = ReminderLevel.Normal;
 
+        /// <summary>
+        /// Number of times this reminder has been sent out
+        /// </summary>
+        public int? Count { get; set; } = 0;
         public Streak Streak { get; set; }
         public User User { get; set; }
 

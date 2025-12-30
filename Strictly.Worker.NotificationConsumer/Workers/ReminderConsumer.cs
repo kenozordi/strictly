@@ -15,6 +15,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
     public class ReminderConsumer : BackgroundService
     {
         private readonly NotificationEvent _NotificationEvent = NotificationEvent.Reminder;
+        private readonly INotificationTemplateFactory _notificationTemplateFactory;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly INotificationService _notificationService;
         private readonly INotificationAuditLogger _auditLogger;
@@ -29,7 +30,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
             IMapper mapper, IReminderService reminderService,
             INotificationService notificationService,
             INotificationAuditLogger auditLogger, JsonSerializerSettings serializerSettings,
-            IOptions<EmailSettings> options)
+            IOptions<EmailSettings> options, INotificationTemplateFactory notificationTemplateFactory)
         {
             _logger = logger;
             _mapper = mapper;
@@ -39,6 +40,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
             _emailSettings = options.Value;
             _serializerSettings = serializerSettings;
             _notificationService = notificationService;
+            _notificationTemplateFactory = notificationTemplateFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,7 +79,7 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     {
                         reminderNotification.UpdatedAt = DateTime.Now;
                         reminderNotification.Status = NotificationStatus.Expired;
-                        await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
+                        await _auditLogger.LogProcessedNotification(_NotificationEvent, StrictlyClient.Consumer, reminderNotification);
                         return;
                     }
                     
@@ -85,14 +87,14 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     {
                         reminderNotification.UpdatedAt = DateTime.Now;
                         reminderNotification.Status = NotificationStatus.Expired;
-                        await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
+                        await _auditLogger.LogProcessedNotification(_NotificationEvent, StrictlyClient.Consumer, reminderNotification);
 
                         reminder!.UpdatedAt = DateTime.Now;
                         await _reminderRepo.UpdateReminder(reminder);
                         return;
                     }
 
-                    var emailTemplate = await File.ReadAllTextAsync(_emailSettings.Templates.BasePath + _emailSettings.Templates.Reminder);
+                    var emailTemplate = await File.ReadAllTextAsync(_emailSettings.Templates.BasePath + _notificationTemplateFactory.GetReminderTemplatePath(reminder.Level));
                     emailTemplate = emailTemplate
                     .Replace("{{StreakTitle}}", reminderNotification.StreakTitle)
                     .Replace("{{ReminderMessage}}", reminderNotification.Message);
@@ -108,10 +110,11 @@ namespace Strictly.Worker.NotificationProducer.Workers
                     var notificationResponse = await _notificationService.SendAsync(notificationRequest);
 
                     reminderNotification.UpdatedAt = DateTime.Now;
-                    reminderNotification.Status = NotificationStatus.Queued;
-                    await _auditLogger.LogProcessedNotification(_NotificationEvent, Domain.Enum.StrictlyClient.Consumer, reminderNotification);
+                    reminderNotification.Status = NotificationStatus.Completed;
+                    await _auditLogger.LogProcessedNotification(_NotificationEvent, StrictlyClient.Consumer, reminderNotification);
 
                     reminder!.UpdatedAt = DateTime.Now;
+                    reminder!.Count = reminder.Count + 1;
                     await _reminderRepo.UpdateReminder(reminder);
 
                 });

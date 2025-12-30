@@ -18,7 +18,6 @@ namespace Strictly.Application.Reminders
 {
     public class ReminderService : IReminderService
     {
-        //protected readonly INotificationService _notificationService;
         protected readonly IReminderRepo _reminderRepo;
         protected readonly IStreakRepo _streakRepo;
         protected readonly IUserRepo _userRepo;
@@ -26,14 +25,12 @@ namespace Strictly.Application.Reminders
 
         public ReminderService(IMapper mapper, IReminderRepo reminderRepo,
             IStreakRepo streakRepo, IUserRepo userRepo
-            //,INotificationService notificationService
             )
         {
             _mapper = mapper;
             _userRepo = userRepo;
             _streakRepo = streakRepo;
             _reminderRepo = reminderRepo;
-            //_notificationService = notificationService;
         }
 
         public async Task<ServiceResult> CreateReminder(CreateReminderRequest createReminderRequest)
@@ -113,7 +110,7 @@ namespace Strictly.Application.Reminders
             reminders = filterOptions.Contains(ReminderFilterOptions.Time) 
                 ? reminders.Where(
                     r => DateTime.Now.TimeOfDay <= r.Time
-                    && DateTime.Now.TimeOfDay >= r.Time.Subtract(TimeSpan.FromMinutes(5))) // buffer of 2.5 minutes before reminder due time
+                    && DateTime.Now.TimeOfDay >= r.Time.Subtract(TimeSpan.FromMinutes(5))) // only get reminders that will be due in 5 minutes, this is to manage the reminders sent to notification queues
                 .ToList() 
                 : reminders;
 

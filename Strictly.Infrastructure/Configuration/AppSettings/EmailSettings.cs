@@ -29,7 +29,17 @@ namespace Strictly.Infrastructure.Configuration.AppSettings
         public string? BasePath { get; set; }
 
         [Required]
-        public string? Reminder { get; set; }
+        public ReminderTemplate? ReminderTemplate { get; set; }
+    }
+
+    public class ReminderTemplate
+    {
+        [Required]
+        public string? Normal { get; set; }
+        [Required]
+        public string? Warning { get; set; }
+        [Required]
+        public string? Critical { get; set; }
     }
 
 }
