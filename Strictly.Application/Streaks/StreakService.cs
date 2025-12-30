@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Strictly.Application.CheckIns;
+using Strictly.Application.Reminders;
 using Strictly.Application.Streaks.StreakFrequencies;
 using Strictly.Application.Users;
 using Strictly.Domain.Constants;
+using Strictly.Domain.Enum;
+using Strictly.Domain.Models.Reminders;
 using Strictly.Domain.Models.StreakParticipants;
 using Strictly.Domain.Models.Streaks;
 using Strictly.Domain.Models.Streaks.CreateStreak;
@@ -22,18 +25,20 @@ namespace Strictly.Application.Streaks
     {
         protected readonly IStreakRepo _streakRepo;
         protected readonly IUserRepo _userRepo;
+        protected readonly IReminderRepo _reminderRepo;
         protected readonly ICheckInService _checkInService;
         protected readonly IMapper _mapper;
         protected readonly ILogger<StreakService> _logger;
         protected readonly IStreakFrequencyFactory _streakFrequencyFactory;
         public StreakService(IStreakRepo streakRepo, IUserRepo userRepo,
             IMapper mapper, ICheckInService checkInService, ILogger<StreakService> logger,
-            IStreakFrequencyFactory streakFrequency)
+            IStreakFrequencyFactory streakFrequency, IReminderRepo reminderRepo)
         {
             _streakFrequencyFactory = streakFrequency;
             _checkInService = checkInService;
             _streakRepo = streakRepo;
             _userRepo = userRepo;
+            _reminderRepo = reminderRepo;
             _mapper = mapper;
             _logger = logger;
         }
@@ -77,7 +82,24 @@ namespace Strictly.Application.Streaks
             var streakFrequencyService = _streakFrequencyFactory.GetStreakFrequencyService(streak.Frequency);
             var firstCheckInDate = await streakFrequencyService.GetNextCheckInDate(streak, DateTime.Now);
             var (isSuccess, message) = await streakFrequencyService.AddCheckInSchedule(streak, firstCheckInDate);
-            return isSuccess
+            if (!isSuccess)
+            {
+                return ResponseHelper.ToUnprocessable("Failed to create the streak check-In schedule, please try again later!");
+            }
+
+            // add default reminder preference
+            var reminderResponse = await _reminderRepo.CreateReminder(new Reminder()
+            {
+                StreakId = streak.Id,
+                UserId = createStreakRequest.UserId,
+                Frequency = (ReminderFrequency)(int)createStreakRequest.Frequency,
+                Time = firstCheckInDate.TimeOfDay,
+                DayOfWeek = createStreakRequest.Frequency == StreakFrequency.Weekly ? (int)firstCheckInDate.DayOfWeek : 0,
+                DayOfMonth = createStreakRequest.Frequency == StreakFrequency.Monthly ? (int)firstCheckInDate.Day : 0,
+                Message = $"You have an upcoming streak: {createStreakRequest.Title} due on {firstCheckInDate.ToString()}",
+                Level = ReminderLevel.Normal,
+            });
+            return reminderResponse > 0
                 ? ResponseHelper.ToSuccess("Streak created successfully")
                 : ResponseHelper.ToUnprocessable("Failed to create streak, please try again later!"); // rollback streak
         }

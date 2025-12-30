@@ -25,5 +25,6 @@ namespace Strictly.Domain.Models.Reminders.CreateReminder
         /// </summary>
         public int DayOfMonth { get; set; }
         public string? Message { get; set; }
+        public ReminderLevel Level { get; set; }
     }
 }

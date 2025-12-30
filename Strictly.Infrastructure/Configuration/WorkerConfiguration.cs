@@ -1,27 +1,29 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Strictly.Infrastructure.DBContext;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Serilog;
+using StackExchange.Redis;
+using Strictly.Application.CheckIns;
+using Strictly.Application.Notifications;
+using Strictly.Application.Reminders;
+using Strictly.Application.Shared;
+using Strictly.Application.Streaks;
+using Strictly.Application.Streaks.StreakFrequencies;
+using Strictly.Application.Users;
+using Strictly.Infrastructure.Configuration.AppSettings;
+using Strictly.Infrastructure.DBContext;
+using Strictly.Infrastructure.Notifications.AuditLoggers;
+using Strictly.Infrastructure.Notifications.Providers;
+using Strictly.Infrastructure.Notifications.Template;
+using Strictly.Infrastructure.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Strictly.Infrastructure.Repository;
-using Strictly.Application.Streaks;
-using Strictly.Application.Users;
-using Strictly.Application.Shared;
-using Strictly.Application.CheckIns;
-using Strictly.Application.Reminders;
-using Strictly.Infrastructure.Configuration.AppSettings;
-using Strictly.Application.Notifications;
-using Serilog;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Strictly.Application.Streaks.StreakFrequencies;
-using Strictly.Infrastructure.Notifications.Providers;
-using Strictly.Infrastructure.Notifications.AuditLoggers;
-using Newtonsoft.Json;
 
 namespace Strictly.Infrastructure.Configuration
 {
@@ -39,8 +41,8 @@ namespace Strictly.Infrastructure.Configuration
             hostApplicationBuilder.Services.BindAppSettings(hostApplicationBuilder.Configuration);
             hostApplicationBuilder.Services.AddDatabaseContext(hostApplicationBuilder.Configuration);
             hostApplicationBuilder.Services.AddServices();
-            hostApplicationBuilder.Services.AddProviders();
-            hostApplicationBuilder.Services.AddSingleton<JsonSerializerSettings>(_ =>
+            hostApplicationBuilder.Services.AddProviders(hostApplicationBuilder.Configuration);
+            hostApplicationBuilder.Services.AddSingleton(_ =>
             new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -82,6 +84,7 @@ namespace Strictly.Infrastructure.Configuration
             services.AddSingleton<IReminderService, ReminderService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<IStreakFrequencyFactory, StreakFrequencyFactory>();
+            services.AddSingleton<INotificationTemplateFactory, NotificationTemplateFactory>();
             services.AddSingleton<DailyStreakService>();
             services.AddSingleton<MonthlyStreakService>();
 
@@ -94,12 +97,16 @@ namespace Strictly.Infrastructure.Configuration
         /// <param name="services"></param>
         /// <returns></returns>
         private static IServiceCollection AddProviders(
-            this IServiceCollection services)
+            this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSingleton<INotificationProviderFactory, NotificationProviderFactory>();
             services.AddSingleton<MailkitProvider>();
             services.AddSingleton<INotificationAuditLogger, RedisAuditLogger>();
+            var connectionStringPlaceholder = new ConnectionStrings();
+            services.AddSingleton<IConnectionMultiplexer>(x =>
+                ConnectionMultiplexer.Connect(configuration.GetConnectionString(nameof(connectionStringPlaceholder.Redis))
+            ));
             return services;
         }
 

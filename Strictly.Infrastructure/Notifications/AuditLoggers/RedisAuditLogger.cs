@@ -29,18 +29,18 @@ namespace Strictly.Infrastructure.Notifications.AuditLoggers
 
         public async Task<bool> LogProcessedNotification(
             NotificationEvent notificationEvent,
-            Domain.Enum.StrictlyClient notificationStage, 
+            StrictlyClient notificationStage, 
             object notification)
         {
             var db = _redisCache.GetDatabase();
             var cacheStreamEntry = new[]
             {
                 new NameValueEntry(
-                    NotificationEvent.Reminder.ToString(),
+                    notificationEvent.ToString(),
                     JsonConvert.SerializeObject(notification, _serializerSettings))
             };
             var streamId = await db.StreamAddAsync(
-                $"{CacheKey.AuditLog}:{NotificationEvent.Reminder.ToString()}:{notificationStage.ToString()}", 
+                $"{CacheKey.AuditLog}:{notificationEvent.ToString()}:{notificationStage.ToString()}", 
                 cacheStreamEntry);
 
             return string.IsNullOrEmpty(streamId.ToString()) ? false : true;
